@@ -24,11 +24,13 @@ define('DEBUG', true);
 define('URL_ADMIN', 'admin');
 
 // CMS version
-define('VERSION', '1.0.0rc1');
+define('VERSION', '1.0.0a');
 
 // Paths for the different parts of the CMS
 define('PATH_CLASS', 'includes'. DS .'classes'. DS);
-define('PATH_COMPILE', 'includes'. DS .'compile'. DS);
+define('PATH_CONTROLLER', 'includes'. DS .'controllers'. DS);
+define('PATH_MODEL', 'includes'. DS .'models'. DS);
+define('PATH_COMPILE', 'includes'. DS .'compiles'. DS);
 define('PATH_FRONTEND', 'includes'. DS .'frontend'. DS);
 define('PATH_BACKEND', 'includes'. DS .'backend'. DS);
 define('PATH_WRAPPER', 'includes'. DS .'wrappers'. DS);

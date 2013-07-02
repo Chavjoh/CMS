@@ -16,11 +16,19 @@ class Autoloader
 	public static function load($class)
 	{
 		// Check class or interface existence
-		if (class_exists($class, FALSE) OR interface_exists($class, FALSE))
+		if (class_exists($class, false) OR interface_exists($class, false))
 			return;
-		
+
+		// Define path to find the class
+		if (preg_match("/Controller/i", $class))
+			$pathClass = PATH_CONTROLLER;
+		else if (preg_match("/Model/i", $class))
+			$pathClass = PATH_MODEL;
+		else
+			$pathClass = PATH_CLASS;
+
 		// Create file path
-		$file = PATH_CLASS.$class.'.php';
+		$file = $pathClass.$class.'.php';
 		
 		// Check file existence
 		if (!file_exists($file))
