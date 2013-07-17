@@ -6,112 +6,144 @@
  * @version 1.0
  */
 
-class AdminMenusController extends AbstractController
+class AdminMenusController extends BackEndController
 {
 	/**
-	 * Default method called by Dispatcher
+	 * Construct controller variable
 	 *
-	 * @param array $arguments Arguments passed by URL to the present Controller
+	 * @see BackEndController::__construct()
 	 */
-	public function index(array $arguments)
+	public function __construct(array $arguments)
 	{
-		parent::index($arguments);
-		$this->skinPath = PATH_SKIN.TEMPLATE_BACKEND.DS;
-		$this->templateFile = 'menuList.tpl';
+		parent::__construct($arguments);
 
-		$menuList = MenuModel::getMenuList();
-		$this->smarty->assign('menuList', $menuList);
+		$this->urlController .= 'Menus/';
+	}
+
+	/**
+	 * List of menus
+	 */
+	public function index()
+	{
+		$this->templateFile = 'menuList.tpl';
+		$this->smarty->assign('menuList', MenuModel::getMenuList());
 	}
 
 	/**
 	 * Create a new menu
 	 *
-	 * @param array $arguments Arguments passed by URL to the present Controller
+	 * @throws PDOException Database error when inserting menu
 	 */
-	public function create(array $arguments)
+	public function create()
 	{
-		parent::index($arguments);
-
 		// When a menu is created
 		if (count($_POST) > 0)
 		{
-			// Create the menu
-			$menu = MenuModel::createMenu(
-				(isset($_POST['key_menu'])) ? $_POST['key_menu'] : '',
-				(isset($_POST['name_menu'])) ? $_POST['name_menu'] : ''
-			);
+			try
+			{
+				MenuModel::createMenu(
+					(isset($_POST['key_menu'])) ? $_POST['key_menu'] : '',
+					(isset($_POST['name_menu'])) ? $_POST['name_menu'] : ''
+				);
+			}
+			catch (InvalidDataException $e)
+			{
+				Logger::logMessage(new LoggerMessage($e->getMessage(), LoggerSeverity::WARNING));
+			}
 
-			// Redirect to the menu list page
-			$this->header[] = "Location:" . Server::getBaseUrl() . URL_ADMIN . '/Menus/';
+			// Redirect to the menu list
+			$this->header[] = "Location:".$this->urlController;
 		}
+
 		// When we have to show the template to create a menu
 		else
 		{
-			$this->skinPath = PATH_SKIN.TEMPLATE_BACKEND.DS;
-			$this->smarty->assign('action', Server::getBaseUrl().URL_ADMIN.'/Menus/create/');
 			$this->templateFile = 'menuForm.tpl';
+			$this->smarty->assign('action', $this->urlController.'create/');
 		}
 	}
 
 	/**
 	 * Edit a menu
 	 *
-	 * @param array $arguments Arguments passed by URL to the present Controller
+	 * @throws ArgumentMissingException Missing menu ID
+	 * @throws PDOException Database error when updating menu
 	 */
-	public function edit(array $arguments)
+	public function edit()
 	{
-		parent::index($arguments);
+		if (count($this->arguments) < 1)
+			throw new ArgumentMissingException(__METHOD__, "Menu ID is required to edit it.");
 
 		// Get the menu ID to edit
-		$id_menu = (isset($arguments[0])) ? intval($arguments[0]) : 0;
+		$id_menu = intval($this->arguments[0]);
 
 		// When a menu is edited
 		if (count($_POST) > 0)
 		{
-			// Get menu instance
-			$menu = MenuModel::getMenu($id_menu);
+			try
+			{
+				MenuModel::editMenu(
+					$id_menu,
+					(isset($_POST['key_menu'])) ? $_POST['key_menu'] : '',
+					(isset($_POST['name_menu'])) ? $_POST['name_menu'] : ''
+				);
+			}
+			catch (InvalidDataException $e)
+			{
+				Logger::logMessage(new LoggerMessage($e->getMessage(), LoggerSeverity::WARNING));
+			}
 
-			// Edit fields
-			$menu->set('key_menu', $_POST['key_menu']);
-			$menu->set('name_menu', $_POST['name_menu']);
-
-			// Save modifications
-			$menu->update();
-
-			// Redirect to the menu list page
+			// Redirect to the menu list
 			$this->header[] = "Location:" . Server::getBaseUrl() . URL_ADMIN . '/Menus/';
 		}
+
 		// When we have to show the template to edit the menu
 		else
 		{
-			$this->skinPath = PATH_SKIN.TEMPLATE_BACKEND.DS;
-			$this->smarty->assign('id_menu', $id_menu);
-			$this->smarty->assign('action', Server::getBaseUrl().URL_ADMIN.'/Menus/edit/'.$id_menu);
-			$this->smarty->assign('menu', MenuModel::getMenu($id_menu));
 			$this->templateFile = 'menuForm.tpl';
+			$this->smarty->assign('id_menu', $id_menu);
+			$this->smarty->assign('action', $this->urlController.'edit/'.$id_menu);
+
+			try
+			{
+				$this->smarty->assign('menu', MenuModel::getMenu($id_menu));
+			}
+			catch (InvalidDataException $e)
+			{
+				Logger::logMessage(new LoggerMessage($e->getMessage(), LoggerSeverity::WARNING));
+			}
 		}
 	}
 
 	/**
 	 * Delete a menu
 	 *
-	 * @param array $arguments Arguments passed by URL to the present Controller
+	 * @throws ArgumentMissingException Missing menu ID
+	 * @throws PDOException Database error when deleting menu
 	 */
-	public function delete(array $arguments)
+	public function delete()
 	{
-		parent::index($arguments);
+		if (count($this->arguments) < 1)
+			throw new ArgumentMissingException(__METHOD__, "Menu ID is required to delete it.");
 
 		// Get the menu ID to delete
-		$id_menu = (isset($arguments[0])) ? intval($arguments[0]) : 0;
+		$id_menu = (isset($this->arguments[0])) ? intval($this->arguments[0]) : 0;
 
-		// Get menu instance
-		$menu = MenuModel::getMenu($id_menu);
+		try
+		{
+			// Get menu instance and delete it
+			$menu = MenuModel::getMenu($id_menu);
+			$menu->delete();
 
-		// Delete menu
-		$menu->delete();
+			Logger::logMessage(new LoggerMessage("Menu successfully deleted.", LoggerSeverity::SUCCESS));
+		}
+		catch (InvalidDataException $e)
+		{
+			Logger::logMessage(new LoggerMessage($e->getMessage(), LoggerSeverity::WARNING));
+		}
 
-		// Redirect to the menu list page
-		$this->header[] = "Location:" . Server::getBaseUrl() . URL_ADMIN . '/Menus/';
+		// Redirect to the menu list
+		$this->header[] = "Location:".$this->urlController;
 	}
 
 	/**
@@ -119,7 +151,7 @@ class AdminMenusController extends AbstractController
 	 */
 	public function getPageName()
 	{
-		return 'Menus - Administration - '.parent::getPageName();
+		return 'Menus - '.parent::getPageName();
 	}
 
 	/**

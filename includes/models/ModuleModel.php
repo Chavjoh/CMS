@@ -24,9 +24,36 @@ class ModuleModel extends AbstractModel
 	}
 
 	/**
+	 * Get the path of the module
+	 *
+	 * @return string Path of the current module
+	 */
+	public function getPath()
+	{
+		return PATH_MODULE.$this->key_module.DS;
+	}
+
+	/**
+	 * Load the module (include)
+	 *
+	 * @throw FileNotFoundException Module file not found
+	 */
+	public function loadModule()
+	{
+		// Create the path to the module file
+		$path = $this->getPath().$this->key_module.'.php';
+
+		if (file_exists($path))
+			include_once($path);
+		else
+			throw new FileNotFoundException(__METHOD__, "Module file ($path) not found.");
+	}
+
+	/**
 	 * Get all module in an array of ModuleModel
 	 *
 	 * @return array Array of ModuleModel representing all modules of the CMS
+	 * @throws PDOException Database error when listing module
 	 */
 	public static function getModuleList()
 	{
@@ -43,8 +70,10 @@ class ModuleModel extends AbstractModel
 		ORDER BY
 			`name_module` ASC";
 
+		// Execute the query and get PDO statement
 		$listModuleStatement = $connexion->query($listModuleQuery);
 
+		// Create for each module its object
 		while ($row = $listModuleStatement->fetch(PDO::FETCH_ASSOC))
 			$listModule[] = new ModuleModel($row['id_module'], $row);
 
@@ -56,6 +85,7 @@ class ModuleModel extends AbstractModel
 	 *
 	 * @param int $id_page ID of the page
 	 * @return array Array of ModuleModel corresponding to all modules on the page
+	 * @throws PDOException Database error when listing module
 	 */
 	public static function getModuleListByPage($id_page)
 	{
@@ -78,12 +108,15 @@ class ModuleModel extends AbstractModel
 		ON
 			`module`.`id_module` = `module_page`.`id_module`
 		WHERE
-			`module_page`.`id_page` = '".intval($id_page)."'
+			`module_page`.`id_page` = ?
 		ORDER BY
 			`module_page`.`order_module_page` ASC";
 
-		$listModuleStatement = $connexion->query($listModuleQuery);
+		// Prepare and execute the query
+		$listModuleStatement = $connexion->prepare($listModuleQuery);
+		$listModuleStatement->execute(array($id_page));
 
+		// Create for each module in the page its objects (ModuleModel and ModulePageModel)
 		while ($row = $listModuleStatement->fetch(PDO::FETCH_ASSOC))
 		{
 			$listModule[] = new ModuleModel($row['id_module'], $row);
@@ -94,22 +127,13 @@ class ModuleModel extends AbstractModel
 	}
 
 	/**
-	 * Get the ModuleModel of a specific user
-	 *
-	 * @param int $id_module ID of the module
-	 * @return ModuleModel Corresponding ModuleModel
-	 */
-	public static function getModule($id_module)
-	{
-		return new ModuleModel($id_module);
-	}
-
-	/**
 	 * Get a module and the settings associated
 	 *
 	 * @param int $id_page ID of the page where the module is
 	 * @param int $position Order of the module
 	 * @return array Array that contains ModuleModel and ModulePageModel
+	 * @throws PDOException Database error when loading module and settings
+	 * @throws InvalidDataException Invalid page ID or module position
 	 */
 	public static function getModuleBy($id_page, $position)
 	{
@@ -130,37 +154,38 @@ class ModuleModel extends AbstractModel
 		ON
 			`module`.`id_module` = `module_page`.`id_module`
 		WHERE
-			`module_page`.`id_page` = '".intval($id_page)."'
-		AND `module_page`.`order_module_page` = '".intval($position)."'";
+			`module_page`.`id_page` = ?
+		AND `module_page`.`order_module_page` = ?";
 
-		$dataStatement = $connexion->query($moduleQuery);
+		// Prepare and execute the query
+		$dataStatement = $connexion->prepare($moduleQuery);
+		$dataStatement->execute(array($id_page, $position));
+
+		// Get the data row of the module
 		$data = $dataStatement->fetch(PDO::FETCH_ASSOC);
 
-		if ($dataStatement->rowCount() > 0)
+		// If the module exists
+		if ($dataStatement->rowCount() == 1)
+		{
 			return array(
 				new ModuleModel($data['id_module'], $data),
 				new ModulePageModel(array($data['id_module'], $data['order_module_page']), $data)
 			);
+		}
 		else
-			return array(null, null);
+			throw new InvalidDataException(__METHOD__, "Unknown module in the page and position indicated.");
 	}
 
 	/**
-	 * Get the path of the module
+	 * Get the ModuleModel of a specific user
 	 *
-	 * @return string Path of the current module
+	 * @param int $id_module ID of the module
+	 * @return ModuleModel Corresponding ModuleModel
+	 * @throws PDOException Database error when loading module
 	 */
-	public function getPath()
+	public static function getModule($id_module)
 	{
-		return PATH_MODULE.$this->key_module.DS;
-	}
-
-	/**
-	 * Load the module (include)
-	 */
-	public function loadModule()
-	{
-		include_once($this->getPath().$this->key_module.'.php');
+		return new ModuleModel($id_module);
 	}
 }
 

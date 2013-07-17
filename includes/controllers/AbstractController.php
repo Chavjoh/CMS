@@ -14,6 +14,13 @@ abstract class AbstractController implements Controller
 	 * @var array
 	 */
 	protected $arguments;
+
+	/**
+	 * Current URL for this controller
+	 *
+	 * @var string
+	 */
+	protected $urlController;
 	
 	/**
 	 * Template file for Smarty
@@ -42,15 +49,23 @@ abstract class AbstractController implements Controller
 	 * @var string
 	 */
 	protected $header = array();
-	
+
 	/**
-	 * @see Controller::index()
+	 * Set arguments array, smarty object and URL controller.
+	 *
+	 * @see Controller::__construct()
 	 */
-	public function index(array $arguments)
+	public function __construct(array $arguments)
 	{
 		$this->arguments = $arguments;
 		$this->smarty = SmartyLib::getInstance('.');
+		$this->urlController = Server::getBaseUrl();
 	}
+
+	/**
+	 * @see Controller::index()
+	 */
+	public abstract function index();
 	
 	/**
 	 * @see Controller::getPageName()
@@ -99,6 +114,7 @@ abstract class AbstractController implements Controller
 	{
 		if (!empty($this->templateFile) AND !empty($this->skinPath))
 		{
+			$this->smarty->assign('urlController', $this->urlController);
 			$this->smarty->assign('skinPath', Server::getBaseUrl().$this->skinPath);
 			$this->smarty->setTemplateDir($this->skinPath.'templates'.DS);
 			return $this->smarty->fetch($this->templateFile);
@@ -126,7 +142,7 @@ abstract class AbstractController implements Controller
 	/**
 	 * @see Controller:getMethodPosition()
 	 */
-	public function getMethodPosition(array $arguments)
+	public static function getMethodPosition(array $urlExplode)
 	{
 		return 0;
 	}
@@ -145,6 +161,16 @@ abstract class AbstractController implements Controller
 	public function getStylesheetList()
 	{
 		return array();
+	}
+
+	/**
+	 * Retrieve the skin path of current page
+	 *
+	 * @return string Skin path
+	 */
+	public function getSkinPath()
+	{
+		return $this->skinPath;
 	}
 }
 

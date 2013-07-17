@@ -19,7 +19,7 @@ class WrapperModel extends AbstractModel
 	 */
 	public function __construct($id = 0, $data = array())
 	{
-		$this->table = DB_PREFIX.'user';
+		$this->table = DB_PREFIX.'wrapper';
 		parent::__construct($id, $data);
 	}
 
@@ -34,23 +34,28 @@ class WrapperModel extends AbstractModel
 	}
 
 	/**
-	 * Load the Wrapper
+	 * Load the Wrapper (include)
+	 *
+	 * @throws FileNotFoundException Wrapper file not found
 	 */
 	public function loadWrapper()
 	{
+		// Create the path to the wrapper file
 		$path = $this->getPath().$this->key_wrapper.'.php';
 
 		if (file_exists($path))
 			include_once($path);
 		else
-			throw new Exception("[".__METHOD__."] Wrapper file (".$this->key_wrapper.") not found");
+			throw new FileNotFoundException(__METHOD__, "Wrapper file (".$this->key_wrapper.") not found.");
 	}
 
 	/**
-	 * Get the WrapperModel with his key
+	 * Get the WrapperModel with its key
 	 *
 	 * @param string $key Wrapper key
 	 * @return WrapperModel WrapperModel associated to the key indicated
+	 * @throws InvalidDataException Unknown wrapper key
+	 * @throws PDOException Database error when loading wrapper
 	 */
 	public static function getWrapper($key)
 	{
@@ -66,16 +71,30 @@ class WrapperModel extends AbstractModel
 		FROM
 			`".DB_PREFIX."wrapper`
 		WHERE
-			`key_wrapper` = '".Security::in($key)."'";
+			`key_wrapper` = ?";
 
-		$row = $connexion->query($wrapperQuery)->fetch(PDO::FETCH_ASSOC);
-		return new WrapperModel($row['id_wrapper'], $row);
+		// Prepare and execute the query
+		$statement = $connexion->prepare($wrapperQuery);
+		$statement->execute(array($key));
+
+		// If the wrapper exists
+		if ($statement->rowCount() == 1)
+		{
+			// Get its data row
+			$row = $statement->fetch(PDO::FETCH_ASSOC);
+
+			// Return the model associated the the data
+			return new WrapperModel($row['id_wrapper'], $row);
+		}
+		else
+			throw new InvalidDataException(__METHOD__, "Unknown wrapper key.");
 	}
 
 	/**
 	 * Get all wrappers in an array of WrapperModel
 	 *
 	 * @return array Array of WrapperModel representing all wrappers of the CMS
+	 * @throws PDOException Database error when loading wrapper list
 	 */
 	public static function getWrapperList()
 	{
@@ -94,8 +113,10 @@ class WrapperModel extends AbstractModel
 		ORDER BY
 			`name_wrapper` ASC";
 
+		// Execute the query and get the PDO statement
 		$wrapperStatement = $connexion->query($wrapperQuery);
 
+		// Create for each wrapper its object
 		while ($row = $wrapperStatement->fetch(PDO::FETCH_ASSOC))
 			$wrapperList[] = new WrapperModel($row['id_wrapper'], $row);
 

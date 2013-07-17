@@ -1,11 +1,8 @@
 <?php
 /**
  * Singleton class for Smarty
- * 
- * This script is brought to this project by Chavjoh
- * 
- * @copyright	Copyright (c) 2012 Chavjoh
- * @author		Chavaillaz Johan
+ *
+ * @author		Chavjoh
  * @link		www.chavjoh.ch
  * @version 	1.0
  */

@@ -1,6 +1,6 @@
 <div class="ajaxHeader">
 	<strong>Templates</strong>
-	{if isset($formId)}
+	{if isset($template)}
 		Edit a template.
 	{else}
 		Register a new template.
@@ -8,24 +8,26 @@
 </div>
 
 <form method="post" action="{$action}">
-	<input type="hidden" name="id" {if $formId|default:FALSE}value="{Security::out($formId)}"{/if}/>
-	<div>Name</div>
-	<input type="text" name="name" {if $formName|default:FALSE}value="{Security::out($formName)}"{/if}/>
-	<div>Folder (located in skins)</div>
-	<input type="text" name="path" {if $formPath|default:FALSE}value="{Security::out($formPath)}"{/if}/>
+	<div>Template name</div>
+	<input type="text" name="name_template" {if isset($template)}value="{Security::out($template->get('name_template'))}" {/if}/>
 
-	{if $formSide|default:FALSE}
-		<input type="hidden" name="side" value="{Security::out($formSide)}"/>
-	{else}
+	<div>Folder name (located in folder skins)</div>
+	<input type="text" name="path_template" {if isset($template)}value="{Security::out($template->get('path_template'))}" {/if}/>
+
+	{if !isset($template)}
 		<div>Side</div>
-		<select name="side">
-			<option value="FRONTEND" {if $formSide|default:FALSE}{if $formSide=='FRONTEND'}selected="selected"{/if}{/if}>User (frontend)</option>
-			<option value="BACKEND"{if $formSide|default:FALSE}{if $formSide=='BACKEND'}selected="selected"{/if}{/if}>Administration (backend)</option>
+		<select name="side_template">
+			<option value="FRONTEND">User (FRONTEND)</option>
+			<option value="BACKEND">Administration (BACKEND)</option>
 		</select>
 	{/if}
+
 	<div style="margin-bottom:10px">
-		<input type="checkbox" name="active" value="1" {if $formActive|default:FALSE}{if $formActive=='1'}checked{/if}{/if}>
-		Active
+		<label>
+			<input type="checkbox" name="active_template" value="1" {if isset($template)}{if $template->isActiveTemplate()}checked{/if}{/if}>
+			Active
+		</label>
 	</div>
+
 	<button type="submit" class="btn btn-success">Save</button>
 </form>

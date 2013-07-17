@@ -8,11 +8,17 @@
 interface Controller
 {
 	/**
-	 * Default method when a Controller is called by URL
+	 * Initialization of the controller.
+	 * Processing arguments passed by URL.
 	 *
 	 * @param array $arguments Arguments passed by URL
 	 */
-	public function index(array $arguments);
+	public function __construct(array $arguments);
+
+	/**
+	 * Default method when a Controller is called by URL
+	 */
+	public function index();
 	
 	/**
 	 * Retrieve the name of the current page managed by Controller
@@ -73,10 +79,10 @@ interface Controller
 	/**
 	 * Position of the method name in the URL arguments
 	 *
-	 * @param array $arguments Arguments passed by URL
+	 * @param array $urlExplode Arguments passed by URL
 	 * @return int Position of the method name
 	 */
-	public function getMethodPosition(array $arguments);
+	public static function getMethodPosition(array $urlExplode);
 
 	/**
 	 * List of all javascript scripts needed to run the module

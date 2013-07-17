@@ -6,30 +6,24 @@
  * @version 1.0
  */
 
-class AdminLoginController extends AbstractController
+class AdminLoginController extends BackEndController
 {
     /**
-     * Default method called by Dispatcher
-     * 
-     * @param array $arguments Arguments passed by URL to the present Controller
+     * Login page
      */
-    public function index(array $arguments)
+    public function index()
     {
-		parent::index($arguments);
-    	
-		// Login form
-		$this->skinPath = PATH_SKIN.TEMPLATE_BACKEND.DS;
 		$this->templateFile = 'login.tpl';
 
 		// Login procedure
-		if (isset($_POST['username'])&&isset($_POST['password']))
+		if (isset($_POST['username']) AND isset($_POST['password']))
 		{
 			try
             {
-                Login::connect($_POST['username'],$_POST['password']);
+                Login::connect($_POST['username'], $_POST['password']);
 				$this->header[] = 'Location: '.Server::getCurrentUrl();
             }
-            catch (Exception $e)
+            catch (InvalidLoginPasswordException $e)
             {
                 $this->smarty->assign('error', $e->getMessage());
             }
@@ -49,7 +43,7 @@ class AdminLoginController extends AbstractController
      */
 	public function getPageName()
 	{
-		return 'Login - Administration - '.parent::getPageName();
+		return 'Login - '.parent::getPageName();
 	}
 
 	/**

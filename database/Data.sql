@@ -87,7 +87,7 @@ INSERT INTO `cms_setting` (`id_setting`, `key_setting`, `value_setting`) VALUES
 (3, 'meta_description', 'Content Management System'),
 (4, 'meta_keywords', 'CMS, powerful, beautiful, simple'),
 (5, 'meta_robots', 'index, follow'),
-(6, 'meta_author', 'Johan Chavaillaz, Jason Racine');
+(6, 'meta_author', 'Chavjoh');
 
 --
 -- Contenu de la table `cms_template`
@@ -107,7 +107,7 @@ INSERT INTO `cms_template` (`id_template`, `name_template`, `path_template`, `ty
 --
 
 INSERT INTO `cms_user` (`id_user`, `login_user`, `password_user`, `name_user`, `surname_user`) VALUES
-(1, 'admin', '7ce0359f12857f2a90c7de465f40a95f01cb5da9', 'Surname', 'Name');
+(1, 'admin', '7d517ea178031c5faefd22a9dbd0b08cbf32b8a6', 'Surname', 'Name');
 
 --
 -- Contenu de la table `cms_wrapper`

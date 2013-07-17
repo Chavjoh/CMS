@@ -39,6 +39,22 @@ class Dispatcher
 		// Delete base url to compute correctly the called controller address
 		$this->url = substr( $url, strlen(Server::getDirectoryScript()) );
 	}
+
+	/**
+	 * Indicate if a redirection occur
+	 *
+	 * @return bool True if the Controller make a redirection, False otherwise
+	 */
+	public function isRedirectHeaders()
+	{
+		foreach ($this->controller->getHeaders() AS $header)
+		{
+			if (preg_match('/^Location\:/', $header))
+				return true;
+		}
+
+		return false;
+	}
 	
 	/**
 	 * Dispatch request to the appropriate controller and method
@@ -53,30 +69,25 @@ class Dispatcher
 		else
 			$url = explode('/', $this->url);
 
-		try {
-			// If we are on admin side
-			if (isset($url[0]) AND $url[0] == URL_ADMIN)
-			{
-				// Delete the first "admin" indication parameter
-				array_shift($url);
+		// If we are on admin side
+		if (isset($url[0]) AND $url[0] == URL_ADMIN)
+		{
+			// Delete the first "admin" indication parameter
+			array_shift($url);
 
-				$this->dispatchBackEnd($url);
-			}
-			else
-				$this->dispatchFrontEnd($url);
-			
-			// Get headers from current controller
-			$headers = $this->controller->getHeaders();
-			
-			// If controller has send some headers
-			if (count($headers) > 0)
-			{
-				foreach ($headers AS $value)
-					header($value);
-			}
+			$this->dispatchBackEnd($url);
 		}
-		catch(Exception $e) {
-			echo "[".__CLASS__."] ".$e->getMessage();
+		else
+			$this->dispatchFrontEnd($url);
+
+		// Get headers from current controller
+		$headers = $this->controller->getHeaders();
+
+		// If controller has send some headers
+		if (count($headers) > 0)
+		{
+			foreach ($headers AS $value)
+				header($value);
 		}
 	}
 
@@ -90,23 +101,15 @@ class Dispatcher
 	private function dispatchFrontEnd($urlExplode)
 	{
 		$this->isAdminSection = false;
-		
-		try {
-			$this->controller = new PageController();
 
-			// Get arguments passed into the method, including page name
-			$arguments = isset($urlExplode[0]) ? $urlExplode : array();
+		$this->controller = new PageController($urlExplode);
 
-			// Check controller type
-			if (!($this->controller instanceof AbstractController))
-				throw new Exception("Controller must be derivated from AbstractController.");
+		// Check controller type
+		if (!($this->controller instanceof AbstractController))
+			throw new InvalidDerivationException("Controller must be derivated from AbstractController.");
 
-			// Call the index method with arguments
-			$this->controller->index($arguments);
-		}
-		catch(Exception $e) {
-			throw new Exception("[".__METHOD__."()] ".$e->getMessage());
-		}
+		// Call the index method with arguments
+		$this->controller->index();
 	}
 
 	/**
@@ -132,43 +135,45 @@ class Dispatcher
 		// Add prefix
 		$controller = 'Admin'.$controller;
 
+		// Get the position of the method in the URL
+		$positionMethod = abs($controller::getMethodPosition($urlExplode));
+
+		// Get method name of controller
+		$method = isset($urlExplode[$positionMethod]) ? $urlExplode[$positionMethod] : '';
+
+		// Check availability of the method called
+		if (!in_array($method, $controller::getMethodAvailable()))
+		{
+			$method = 'index';
+			$arguments = $urlExplode;
+		}
+		else
+		{
+			// Delete the URL argument processed (method name)
+			unset($urlExplode[$positionMethod]);
+			$arguments = array_values($urlExplode);
+		}
+
+		// Create controller instance
 		try {
-			// Create controller instance
-			try {
-				$this->controller = new $controller();
-			} catch(Exception $e) {
-				$this->controller = new AdminNotFoundController();
-			}
-
-			// Get the position of the method in the URL
-			$positionMethod = abs($this->controller->getMethodPosition($urlExplode));
-
-			// Get method name of controller
-			$method = isset($urlExplode[$positionMethod]) ? $urlExplode[$positionMethod] : '';
-
-			// Check availability of the method called
-			if (!in_array($method, $this->controller->getMethodAvailable()))
-			{
-				$method = 'index';
-				$arguments = $urlExplode;
-			}
-			else
-			{
-				// Delete the URL argument computed (method name)
-				unset($urlExplode[$positionMethod]);
-				$arguments = array_values($urlExplode);
-			}
-
-			// Check controller type
-			if (!($this->controller instanceof AbstractController))
-				throw new Exception("Controller must be derivated from AbstractController.");
-				
-			// Call the specified method with arguments
-			$this->controller->$method($arguments);
+			$this->controller = new $controller($arguments);
 		}
-		catch(Exception $e) {
-			throw new Exception("[".__METHOD__."()] ".$e->getMessage());
+		catch (FatalErrorException $e)
+		{
+			throw $e;
 		}
+		catch (CmsException $e)
+		{
+			//TODO: ErrorController
+			$this->controller = new AdminNotFoundController($arguments);
+			$method = 'index';
+		}
+
+		$this->controller->$method();
+
+		// Check controller type
+		if (!($this->controller instanceof AbstractController))
+			throw new InvalidDerivationException("Controller must be derivated from AbstractController.");
 	}
 	
 	/**
@@ -179,23 +184,6 @@ class Dispatcher
 	public function getController()
 	{
 		return $this->controller;
-	}
-	
-	/**
-	 * Retrieve the skin path of current page
-	 * (FrontEnd or BackEnd template)
-	 * 
-	 * @return string Skin path
-	 */
-	public function getSkinPath()
-	{
-		// If we are in the admin section, we use the backend template
-		if ($this->isAdminSection)
-			return PATH_SKIN . TemplateModel::getActivePath(TemplateModel::BackEnd) . DS;
-		
-		// Otherwise we use the frontend template
-		else
-			return PATH_SKIN . TemplateModel::getActivePath(TemplateModel::FrontEnd) . DS;
 	}
 }
 

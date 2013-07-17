@@ -89,6 +89,14 @@
 			</nav>
 			{/if}
 
+			<section id="logger">
+				{foreach from=Logger::getListMessage() item="message"}
+					<div class="{$message->getSeverityClass()}">
+						{$message->getMessage()}
+					</div>
+				{/foreach}
+			</section>
+
 			<section id="content">
 				{$controller->getPageContent()}
 			</section>

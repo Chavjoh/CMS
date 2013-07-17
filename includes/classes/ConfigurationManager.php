@@ -134,8 +134,6 @@ class ConfigurationManager
 		if (!isset(self::$configurationList[$key]))
 			throw new Exception("[".__CLASS__."] Configuration key specified does not exist. It's therefore impossible to remove.");
 
-		$PDO = PDOLib::getInstance();
-
 		static::$modificationList[$key] = 'R';
 
 		if (static::$autoCommit)

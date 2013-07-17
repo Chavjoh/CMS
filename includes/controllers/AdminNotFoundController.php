@@ -6,24 +6,19 @@
  * @version 1.0
  */
 
-class AdminNotFoundController extends AbstractController
+class AdminNotFoundController extends BackEndController
 {
 	/**
 	 * Default method called by Dispatcher
-	 *
-	 * @param array $arguments Arguments passed by URL to the present Controller
 	 */
-	public function index(array $arguments)
-	{
-		parent::index($arguments);
-	}
+	public function index() {}
 
 	/**
 	 * @see AbstractController::getPageName()
 	 */
 	public function getPageName()
 	{
-		return 'Page Not Found - '.parent::getPageName();
+		return 'Page not found - '.parent::getPageName();
 	}
 
 	/**

@@ -6,29 +6,43 @@
  * @version 1.0
  */
 
-class AdminModulesController extends AbstractController
+class AdminModulesController extends BackEndController
 {
 	/**
-	 * Default method called by Dispatcher
+	 * Show module list
 	 *
-	 * @param array $arguments Arguments passed by URL to the present Controller
+	 * @throws PDOException Database error when listening module
 	 */
-	public function index(array $arguments)
+	public function index()
 	{
-		parent::index($arguments);
-		$this->skinPath = PATH_SKIN.TEMPLATE_BACKEND.DS;
 		$this->templateFile = 'moduleList.tpl';
 
+		// Get all module list
 		$moduleList = ModuleModel::getModuleList();
 		$moduleObject = array();
 
 		foreach ($moduleList AS $module)
 		{
 			$moduleKey = $module->get('key_module');
-			include($module->getPath().$moduleKey.'.php');
-			$moduleObject[$moduleKey] = new $moduleKey($module);
+
+			try
+			{
+				// Try to load the module class
+				$module->loadModule();
+
+				// Check if the module class was loaded
+				if (!class_exists($moduleKey, FALSE))
+					Logger::logMessage(new LoggerMessage("Class ($moduleKey) not found.", LoggerSeverity::ERROR));
+				else
+					$moduleObject[$moduleKey] = new $moduleKey($module);
+			}
+			catch (FileNotFoundException $e)
+			{
+				Logger::logMessage(new LoggerMessage($e->getMessage(), LoggerSeverity::ERROR));
+			}
 		}
 
+		// Assign to the template the module list and the module object list
 		$this->smarty->assign('moduleObject', $moduleObject);
 		$this->smarty->assign('moduleList', $moduleList);
 	}
@@ -38,7 +52,7 @@ class AdminModulesController extends AbstractController
 	 */
 	public function getPageName()
 	{
-		return 'Modules - Administration - '.parent::getPageName();
+		return 'Modules - '.parent::getPageName();
 	}
 }
 

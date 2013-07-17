@@ -6,7 +6,7 @@
  * @version 1.0
  */
 
-class AdminPagesController extends AbstractController
+class AdminPagesController extends BackEndController
 {
 	/**
 	 * Current module edited
@@ -16,285 +16,312 @@ class AdminPagesController extends AbstractController
 	protected $moduleObjectEdited = null;
 
 	/**
-	 * Current page modified
-	 *
-	 * @var int
-	 */
-	protected $id_page = null;
-
-	/**
-	 * Current URL for this controller
-	 *
-	 * @var string
-	 */
-	protected $urlController;
-
-	/**
-	 * Current URL for the page loaded
-	 *
-	 * @var string
-	 */
-	protected $urlPage;
-
-	/**
 	 * Construct controller variable
+	 *
+	 * @see BackEndController::__construct()
 	 */
-	public function __construct()
+	public function __construct(array $arguments)
 	{
-		$this->urlController = Server::getBaseUrl().URL_ADMIN.'/Pages/';
+		parent::__construct($arguments);
+
+		$this->urlController .= 'Pages/';
 	}
 
 	/**
-	 * Default method called by Dispatcher
-	 *
-	 * @param array $arguments Arguments passed by URL to the present Controller
+	 * Pages list
 	 */
-	public function index(array $arguments)
+	public function index()
 	{
-		parent::index($arguments);
-		$this->skinPath = PATH_SKIN.TEMPLATE_BACKEND.DS;
 		$this->templateFile = 'pageList.tpl';
-
-		// Get page list
-		$pageList = PageModel::getPageList();
-		$this->smarty->assign('pageList', $pageList);
+		$this->smarty->assign('pageList', PageModel::getPageList());
 	}
 
 	/**
 	 * Create a new page
 	 *
-	 * @param array $arguments Arguments passed by URL to the present Controller
+	 * @throws PDOException Database error when inserting page
 	 */
-	public function create(array $arguments)
+	public function create()
 	{
-		parent::index($arguments);
-
-		$this->urlPage = Server::getBaseUrl().URL_ADMIN.'/Pages/create/';
-
 		// When a page is created
 		if (count($_POST) > 0)
 		{
-			// Create the page
-			$menu = PageModel::createPage(
-				1, // TODO: Change this to real value
-				(isset($_POST['alias_page'])) ? $_POST['alias_page'] : '',
-				(isset($_POST['title_page'])) ? $_POST['title_page'] : '',
-				(isset($_POST['description_page'])) ? $_POST['description_page'] : '',
-				(isset($_POST['keywords_page'])) ? $_POST['keywords_page'] : '',
-				(isset($_POST['robots_page'])) ? $_POST['robots_page'] : '',
-				(isset($_POST['author_page'])) ? $_POST['author_page'] : ''
-			);
+			try
+			{
+				PageModel::createPage(
+					1, // TODO: Change this to real value
+					(isset($_POST['alias_page'])) ? $_POST['alias_page'] : '',
+					(isset($_POST['title_page'])) ? $_POST['title_page'] : '',
+					(isset($_POST['description_page'])) ? $_POST['description_page'] : '',
+					(isset($_POST['keywords_page'])) ? $_POST['keywords_page'] : '',
+					(isset($_POST['robots_page'])) ? $_POST['robots_page'] : '',
+					(isset($_POST['author_page'])) ? $_POST['author_page'] : ''
+				);
+			}
+			catch (InvalidDataException $e)
+			{
+				Logger::logMessage(new LoggerMessage($e->getMessage(), LoggerSeverity::WARNING));
+			}
 
 			// Redirect to the page list
-			$this->header[] = "Location:".$this->urlController;
+			$this->header[] = 'Location:'.$this->urlController;
 		}
-		// When we have to show the template to create a menu
+		// When we have to show the template to create a page
 		else
 		{
-			$this->skinPath = PATH_SKIN.TEMPLATE_BACKEND.DS;
-			$this->smarty->assign('action', $this->urlPage);
 			$this->templateFile = 'pageFormInformation.tpl';
+			$this->smarty->assign('action', $this->urlController.'create/');
 		}
 	}
 
 	/**
-	 * Action for editing page settings and content
+	 * Edit page settings and content
 	 *
-	 * @param array $arguments Arguments passed by URL to the present Controller
+	 * @throws PDOException Database error when editing page
+	 * @throws ArgumentMissingException Missing page ID
 	 */
-	public function edit(array $arguments)
+	public function edit()
 	{
-		parent::index($arguments);
+		if (count($this->arguments) < 1)
+			throw new ArgumentMissingException(__METHOD__, "Page ID is required to edit it.");
 
 		// Get the page ID to edit
-		$id_page = (isset($arguments[0])) ? intval($arguments[0]) : 0;
-
-		$this->urlPage = Server::getBaseUrl().URL_ADMIN.'/Pages/edit/'.$id_page;
+		$id_page = intval($this->arguments[0]);
 
 		// When a page is edited
 		if (count($_POST) > 0)
 		{
-			// Get page instance
-			$page = PageModel::getPage($id_page);
-
-			// Edit fields
-			$page->set('id_layout', 1); // TODO: Change this to real value
-			$page->set('alias_page', $_POST['alias_page']);
-			$page->set('title_page', $_POST['title_page']);
-			$page->set('description_page', $_POST['description_page']);
-			$page->set('keywords_page', $_POST['keywords_page']);
-			$page->set('robots_page', $_POST['robots_page']);
-			$page->set('author_page', $_POST['author_page']);
-
-			// Save modifications
-			$page->update();
+			try
+			{
+				PageModel::editPage(
+					$id_page,
+					1, // TODO: Change this to real value
+					(isset($_POST['alias_page'])) ? $_POST['alias_page'] : '',
+					(isset($_POST['title_page'])) ? $_POST['title_page'] : '',
+					(isset($_POST['description_page'])) ? $_POST['description_page'] : '',
+					(isset($_POST['keywords_page'])) ? $_POST['keywords_page'] : '',
+					(isset($_POST['robots_page'])) ? $_POST['robots_page'] : '',
+					(isset($_POST['author_page'])) ? $_POST['author_page'] : ''
+				);
+			}
+			catch (InvalidDataException $e)
+			{
+				Logger::logMessage(new LoggerMessage($e->getMessage(), LoggerSeverity::WARNING));
+			}
 
 			// Redirect to the page list
-			$this->header[] = "Location:".$this->urlController;
+			$this->header[] = 'Location:'.$this->urlController.'edit/'.$id_page;
 		}
 		// When we have to show the template to edit the page
 		else
 		{
 			list($moduleList, $settingsList) = ModuleModel::getModuleListByPage($id_page);
 
-			$this->skinPath = PATH_SKIN.TEMPLATE_BACKEND.DS;
-			$this->smarty->assign('id_page', $id_page);
-			$this->smarty->assign('action', $this->urlPage);
-			$this->smarty->assign('page', PageModel::getPage($id_page));
-			$this->smarty->assign('moduleList', $moduleList);
-			$this->smarty->assign('wrapperList', WrapperModel::getWrapperList());
-			$this->smarty->assign('settingsList', $settingsList);
 			$this->templateFile = 'pageEdit.tpl';
+			$this->smarty->assign('id_page', $id_page);
+			$this->smarty->assign('action', $this->urlController.'edit/'.$id_page);
+			$this->smarty->assign('moduleList', $moduleList);
+			$this->smarty->assign('settingsList', $settingsList);
+			$this->smarty->assign('wrapperList', WrapperModel::getWrapperList());
+
+			try
+			{
+				$this->smarty->assign('page', PageModel::getPage($id_page));
+			}
+			catch (InvalidDataException $e)
+			{
+				Logger::logMessage(new LoggerMessage($e->getMessage(), LoggerSeverity::WARNING));
+			}
 		}
 	}
 
 	/**
-	 * Action for deleting a page
+	 * Delete a page
 	 *
-	 * @param array $arguments Arguments passed by URL to the present Controller
+	 * @throws PDOException Database error when deleting page
+	 * @throws ArgumentMissingException Missing page ID
 	 */
-	public function delete(array $arguments)
+	public function delete()
 	{
-		parent::index($arguments);
+		if (count($this->arguments) < 1)
+			throw new ArgumentMissingException(__METHOD__, "Page ID is required to delete it.");
 
 		// Get the page ID to delete
-		$id_page = (isset($arguments[0])) ? intval($arguments[0]) : 0;
+		$id_page = intval($this->arguments[0]);
 
-		// Get page instance
-		$page = PageModel::getPage($id_page);
+		try
+		{
+			// Get page instance and delete it
+			$page = PageModel::getPage($id_page);
+			$page->delete();
 
-		// Delete page
-		$page->delete();
+			Logger::logMessage(new LoggerMessage("Page successfully deleted.", LoggerSeverity::SUCCESS));
+		}
+		catch (InvalidDataException $e)
+		{
+			Logger::logMessage(new LoggerMessage($e->getMessage(), LoggerSeverity::WARNING));
+		}
 
-		// Redirect to the page list page
-		$this->header[] = "Location:".$this->urlController;
+		// Redirect to the user list page
+		$this->header[] = 'Location:'.$this->urlController;
 	}
 
 	/**
-	 * Action for adding a module to a page
+	 * Add a module to a page
 	 *
-	 * @param array $arguments Arguments passed by URL to the present Controller
+	 * @throws ArgumentMissingException Missing page ID
 	 */
-	public function addModule(array $arguments)
+	public function addModule()
 	{
-		parent::index($arguments);
+		if (count($this->arguments) < 1)
+			throw new ArgumentMissingException(__METHOD__, "Page ID is required to add a module.");
 
-		$this->id_page = intval($arguments[0]);
+		$id_page = intval($this->arguments[0]);
 
+		// When a module is added
 		if (count($_POST) > 0)
 		{
-			ModulePageModel::createModulePage(intval($_POST['module']), $this->id_page);
+			ModulePageModel::createModulePage(
+				intval($_POST['module']),
+				$id_page
+			);
 
 			// Redirect to the page edition
-			$this->header[] = "Location:".$this->urlController.'edit/'.$this->id_page;
+			$this->header[] = 'Location:'.$this->urlController.'edit/'.$id_page;
 		}
+		// When we have to show the template to add a module
 		else
 		{
-			$moduleList = ModuleModel::getModuleList();
-
-			$this->skinPath = PATH_SKIN.TEMPLATE_BACKEND.DS;
-			$this->smarty->assign('moduleList', $moduleList);
 			$this->templateFile = 'pageAddModule.tpl';
+			$this->smarty->assign('moduleList', ModuleModel::getModuleList());
 		}
 	}
 
 	/**
-	 * Action for editing a module in a page
+	 * Edit a module in a page
 	 *
-	 * @param array $arguments Arguments passed by URL to the present Controller
-	 * @throws Exception URL arguments missing or incorrect
+	 * @throws ArgumentMissingException Missing page ID and module position
 	 */
-	public function editModule(array $arguments)
+	public function editModule()
 	{
-		parent::index($arguments);
+		if (count($this->arguments) < 2)
+			throw new ArgumentMissingException(__METHOD__, "Page ID and module position are required to change module order.");
 
-		if (count($arguments) < 2)
-			throw new Exception("[".__METHOD__."] URL arguments are missing.");
+		$id_page = intval($this->arguments[0]);
+		$positionModule = intval($this->arguments[1]);
 
-		$this->id_page = intval($arguments[0]);
-		$positionModule = intval($arguments[1]);
+		try
+		{
+			// Get the ModuleModel and ModulePageModel
+			list($module, $settings) = ModuleModel::getModuleBy($id_page, $positionModule);
 
-		list($module, $settings) = ModuleModel::getModuleBy($this->id_page, $positionModule);
+			// Load module classes
+			$module->loadModule();
 
-		if (is_null($module) OR is_null($settings))
-			throw new Exception("[".__METHOD__."] One or more of these items are incorrect: Module, Page, Position");
+			// Get the module key
+			$keyModule = $module->get('key_module');
 
-		$module->loadModule();
-		$keyModule = $module->get('key_module');
+			// Create an object of the module
+			$this->moduleObjectEdited = new $keyModule($module, $settings);
 
-		$this->moduleObjectEdited = new $keyModule($module, $settings);
-
-		if (count($_POST) > 0)
-			$this->moduleObjectEdited->saveForm();
+			// When an edit form of a module
+			if (count($_POST) > 0)
+				$this->moduleObjectEdited->saveForm();
+		}
+		catch (InvalidDataException $e)
+		{
+			Logger::logMessage(new LoggerMessage($e->getMessage(), LoggerSeverity::WARNING));
+		}
 	}
 
 	/**
-	 * Action to increase the order of a module in a page
+	 * Increase the order of a module in a page
 	 *
-	 * @param array $arguments Arguments passed by URL to the present Controller
-	 * @throws Exception URL arguments missing or incorrect
+	 * @throws ArgumentMissingException Missing page ID and module position
 	 */
-	public function upModule(array $arguments)
+	public function upModule()
 	{
-		parent::index($arguments);
+		if (count($this->arguments) < 2)
+			throw new ArgumentMissingException(__METHOD__, "Page ID and module position are required to change module order.");
 
-		if (count($arguments) < 2)
-			throw new Exception("[".__METHOD__."] URL arguments are missing.");
+		$id_page = intval($this->arguments[0]);
+		$positionModule = intval($this->arguments[1]);
 
-		$this->id_page = intval($arguments[0]);
-		$positionModule = intval($arguments[1]);
+		try
+		{
+			// Get the ModuleModel and ModulePageModel
+			list($module, $settings) = ModuleModel::getModuleBy($id_page, $positionModule);
 
-		list($module, $settings) = ModuleModel::getModuleBy($this->id_page, $positionModule);
-		$settings->changeOrder('up');
+			// Change order of the module in the page
+			$settings->changeOrder('up');
 
-		// Redirect to the page edition
-		$this->header[] = "Location:".$this->urlController.'edit/'.$this->id_page;
+			// Redirect to the page edition
+			$this->header[] = "Location:".$this->urlController.'edit/'.$id_page;
+		}
+		catch (InvalidDataException $e)
+		{
+			Logger::logMessage(new LoggerMessage($e->getMessage(), LoggerSeverity::WARNING));
+		}
 	}
 
 	/**
-	 * Action to decrease the order of a module in a page
+	 * Decrease the order of a module in a page
 	 *
-	 * @param array $arguments Arguments passed by URL to the present Controller
-	 * @throws Exception URL arguments missing or incorrect
+	 * @throws ArgumentMissingException Missing page ID and module position
 	 */
-	public function downModule(array $arguments)
+	public function downModule()
 	{
-		parent::index($arguments);
+		if (count($this->arguments) < 2)
+			throw new ArgumentMissingException(__METHOD__, "Page ID and module position are required to change module order.");
 
-		if (count($arguments) < 2)
-			throw new Exception("[".__METHOD__."] URL arguments are missing.");
+		$id_page = intval($this->arguments[0]);
+		$positionModule = intval($this->arguments[1]);
 
-		$this->id_page = intval($arguments[0]);
-		$positionModule = intval($arguments[1]);
+		try
+		{
+			// Get the ModuleModel and ModulePageModel
+			list($module, $settings) = ModuleModel::getModuleBy($id_page, $positionModule);
 
-		list($module, $settings) = ModuleModel::getModuleBy($this->id_page, $positionModule);
-		$settings->changeOrder('down');
+			// Change order of the module in the page
+			$settings->changeOrder('down');
 
-		// Redirect to the page edition
-		$this->header[] = "Location:".$this->urlController.'edit/'.$this->id_page;
+			// Redirect to the page edition
+			$this->header[] = "Location:".$this->urlController.'edit/'.$id_page;
+		}
+		catch (InvalidDataException $e)
+		{
+			Logger::logMessage(new LoggerMessage($e->getMessage(), LoggerSeverity::WARNING));
+		}
 	}
 
 	/**
-	 * Action to delete a module in a page
+	 * Delete a module in a page
 	 *
-	 * @param array $arguments Arguments passed by URL to the present Controller
-	 * @throws Exception URL arguments missing or incorrect
+	 * @throws ArgumentMissingException Missing page ID and module position
 	 */
-	public function deleteModule(array $arguments)
+	public function deleteModule()
 	{
-		parent::index($arguments);
+		if (count($this->arguments) < 2)
+			throw new ArgumentMissingException(__METHOD__, "Page ID and module position are required to delete a module.");
 
-		if (count($arguments) < 2)
-			throw new Exception("[".__METHOD__."] URL arguments are missing.");
+		$id_page = intval($this->arguments[0]);
+		$positionModule = intval($this->arguments[1]);
 
-		$this->id_page = intval($arguments[0]);
-		$positionModule = intval($arguments[1]);
+		try
+		{
+			// Get the ModuleModel and ModulePageModel
+			list($module, $settings) = ModuleModel::getModuleBy($id_page, $positionModule);
 
-		list($module, $settings) = ModuleModel::getModuleBy($this->id_page, $positionModule);
-		$settings->delete();
+			// Delete the module in the page (corresponding to ModulePageModel)
+			$settings->delete();
 
-		// Redirect to the page edition
-		$this->header[] = "Location:".$this->urlController.'edit/'.$this->id_page;
+			// Redirect to the page edition
+			$this->header[] = 'Location:'.$this->urlController.'edit/'.$id_page;
+		}
+		catch (InvalidDataException $e)
+		{
+			Logger::logMessage(new LoggerMessage($e->getMessage(), LoggerSeverity::WARNING));
+		}
 	}
 
 	/**
@@ -302,7 +329,7 @@ class AdminPagesController extends AbstractController
 	 */
 	public function getPageName()
 	{
-		return 'Pages - Administration - '.parent::getPageName();
+		return 'Pages - '.parent::getPageName();
 	}
 
 	/**
@@ -310,8 +337,11 @@ class AdminPagesController extends AbstractController
 	 */
 	public function getPageContent()
 	{
+		// When a module is edited
 		if (!is_null($this->moduleObjectEdited))
 			return $this->moduleObjectEdited->getEditForm();
+
+		// Normal page load
 		else
 			return parent::getPageContent();
 	}
@@ -336,8 +366,9 @@ class AdminPagesController extends AbstractController
 	/**
 	 * @see AbstractController::getMethodPosition()
 	 */
-	public function getMethodPosition(array $arguments)
+	public static function getMethodPosition(array $arguments)
 	{
+		// If we manage a module, the method position change
 		if (count($arguments) > 1 AND strpos($arguments[1], "Module") !== false)
 			return 1;
 

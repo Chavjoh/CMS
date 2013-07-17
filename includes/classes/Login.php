@@ -7,6 +7,11 @@
 
 class Login 
 {
+	/**
+	 * Indicate if the current user is logged in the BackEnd
+	 *
+	 * @return bool True if the current user is logged, False otherwise
+	 */
 	public static function isLogged()
 	{
 	    if (isset($_SESSION['login']))
@@ -14,16 +19,18 @@ class Login
 		else
 			return false;
 	}
-	
-	public static function connect($in_user, $in_password)
+
+	/**
+	 * Connect a user to the BackEnd
+	 *
+	 * @param string $user User name
+	 * @param string $password User password
+	 * @throws InvalidLoginPasswordException Bad login or password
+	 */
+	public static function connect($user, $password)
 	{
 		$DB = PDOLib::getInstance();
 
-		// Input security
-		$user = Security::in($in_user);
-		$password = Security::passwordHash(Security::in($in_password));
-
-		// Query
 		$query = $DB->prepare("
 		SELECT 
 			`id_user`,
@@ -36,7 +43,11 @@ class Login
 		WHERE 
 			`login_user` = ?
 		AND `password_user` = ?");
-		$query->execute(array($user, $password));
+
+		$query->execute(array(
+			$user,
+			Security::passwordHash($password)
+		));
 
 		// Successful login
 		if ($query->rowCount() == 1)
@@ -45,16 +56,21 @@ class Login
 
 			// Set the session parameters
 			$_SESSION['id_user'] = $result['id_user'];
-			$_SESSION['login'] = $result['login_user'];
-			$_SESSION['name'] = $result['name_user'];
-			$_SESSION['surname'] = $result['surname_user'];
+			static::updateSessionInformation($result['login_user'], $result['name_user'], $result['surname_user']);
 		}
 
-		// Failed login
+		// Bad login
 		else
-			throw new Exception("<strong>Error :</strong> Bad login or password");
+			throw new InvalidLoginPasswordException(__METHOD__, "Bad login or password");
 	}
-	
+
+	/**
+	 * Update session information for current user
+	 *
+	 * @param string $login User login
+	 * @param string $name User name
+	 * @param string $surname User surname
+	 */
 	public static function updateSessionInformation($login, $name, $surname)
 	{
 		$_SESSION['login'] = $login;
@@ -62,13 +78,13 @@ class Login
 		$_SESSION['surname'] = $surname;
 	}
 
+	/**
+	 * Disconnect user from BackEnd
+	 */
 	public static function disconnect()
 	{
 		// Unset session variables
 		session_unset();
-
-		// Redirect to login page
-		header('Location: '.Server::getDirectoryScript().DS.URL_ADMIN);
 	}
 }
 

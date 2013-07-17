@@ -1,5 +1,5 @@
-{assign var=editLink value=Server::getBaseUrl()|cat:'admin/Templates/edit/'}
-{assign var=deleteLink value=Server::getBaseUrl()|cat:'admin/Templates/delete/'}
+{assign var=editLink value=$urlController|cat:'edit/'}
+{assign var=deleteLink value=$urlController|cat:'delete/'}
 
 <h1> <img src="{$skinPath}images/templates.png" alt="Templates" /> Templates </h1>
 
@@ -22,18 +22,18 @@
 		</tr>
 	</thead>
 	<tbody>
-		{foreach from=$list item=template}
+		{foreach from=$templateList item=template}
 		<tr>
-			<td>{Security::out($template['name_template'])}</td>
-			<td>{Security::out($template['path_template'])}</td>
-			<td>{$template['type_template']}</td>
-			<td>{if $template['active_template']==1}YES{/if}</td>
+			<td>{Security::out($template->get('name_template'))}</td>
+			<td>{Security::out($template->get('path_template'))}</td>
+			<td>{$template->get('type_template')}</td>
+			<td>{if $template->get('active_template')==1}YES{/if}</td>
 			<td class="actions">
-				<a href="{$editLink|cat:$template['id_template']}" class="nyroModal">
+				<a href="{$editLink|cat:$template->get('id_template')}" class="nyroModal">
 					<img src="{$skinPath}images/edit.png" alt="Edit" />
 					EDIT
 				</a>
-				<a href="{$deleteLink|cat:$template['id_template']}" onclick="return confirm('Are you sure to want to delete this template ?')">
+				<a href="{$deleteLink|cat:$template->get('id_template')}" onclick="return confirm('Are you sure to want to delete this template ?')">
 					<img src="{$skinPath}images/delete.png" alt="Delete" />
 					DELETE
 				</a>

@@ -1,6 +1,6 @@
-{assign var=createLink value=Server::getBaseUrl()|cat:'admin/Users/create/'}
-{assign var=editLink value=Server::getBaseUrl()|cat:'admin/Users/edit/'}
-{assign var=deleteLink value=Server::getBaseUrl()|cat:'admin/Users/delete/'}
+{assign var=createLink value=$urlController|cat:'create/'}
+{assign var=editLink value=$urlController|cat:'edit/'}
+{assign var=deleteLink value=$urlController|cat:'delete/'}
 
 <h1> <img src="{$skinPath}images/users.png" alt="Users" /> Users </h1>
 

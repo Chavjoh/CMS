@@ -6,17 +6,13 @@
  * @version 1.0
  */
 
-class AdminDefaultController extends AbstractController
+class AdminDefaultController extends BackEndController
 {
     /**
-     * Default method called by Dispatcher
-     * 
-     * @param array $arguments Arguments passed by URL to the present Controller
+     * BackEnd home page
      */
-    public function index(array $arguments)
+    public function index()
     {
-    	parent::index($arguments);
-		$this->skinPath = PATH_SKIN.TEMPLATE_BACKEND.DS;
 		$this->templateFile = 'home.tpl';
     }
 
@@ -25,7 +21,7 @@ class AdminDefaultController extends AbstractController
 	 */
 	public function getPageName()
 	{
-		return 'Home - Administration - '.parent::getPageName();
+		return 'Home - '.parent::getPageName();
 	}
 }
 

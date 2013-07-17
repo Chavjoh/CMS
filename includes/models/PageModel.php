@@ -24,6 +24,34 @@ class PageModel extends AbstractModel
 	}
 
 	/**
+	 * @see AbstractModel::set()
+	 * @throws InvalidDataException Invalid alias or title
+	 */
+	public function set($field, $value)
+	{
+		switch ($field)
+		{
+			case 'alias_page':
+				if (empty($value))
+					throw new InvalidDataException(__METHOD__, "Invalid page alias (cannot be empty).");
+				else if ($value == URL_ADMIN)
+					throw new InvalidDataException(__METHOD__, "Invalid page alias (cannot be admin URL key).");
+				else if (is_dir($value))
+					throw new InvalidDataException(__METHOD__, "Invalid page alias (cannot be a directory name).");
+				else if (!preg_match('/^[a-zA-Z0-9]*$/i', $value))
+					throw new InvalidDataException(__METHOD__, "Invalid page alias (only characters and number without space).");
+				break;
+
+			case 'title_page':
+				if (empty($value))
+					throw new InvalidDataException(__METHOD__, "Invalid page title (cannot be empty).");
+				break;
+		}
+
+		parent::set($field, $value);
+	}
+
+	/**
 	 * Create a new page
 	 *
 	 * @param int $id_layout ID of the layout selected
@@ -34,26 +62,85 @@ class PageModel extends AbstractModel
 	 * @param string $robots_page Robots Meta Tag
 	 * @param string $author_page Author Meta Tag
 	 * @return PageModel Page created
+	 * @throws InvalidDataException Invalid layout, alias or title
+	 * @throws PDOException Database error when inserting page
 	 */
 	public static function createPage($id_layout, $alias_page, $title_page, $description_page, $keywords_page, $robots_page, $author_page)
 	{
-		$menu = new PageModel();
-		$menu->set('id_layout', $id_layout);
-		$menu->set('alias_page', $alias_page);
-		$menu->set('title_page', $title_page);
-		$menu->set('description_page', $description_page);
-		$menu->set('keywords_page', $keywords_page);
-		$menu->set('robots_page', $robots_page);
-		$menu->set('author_page', $author_page);
-		$menu->insert();
+		$page = new PageModel();
+		$page->set('id_layout', $id_layout);
+		$page->set('alias_page', $alias_page);
+		$page->set('title_page', $title_page);
+		$page->set('description_page', $description_page);
+		$page->set('keywords_page', $keywords_page);
+		$page->set('robots_page', $robots_page);
+		$page->set('author_page', $author_page);
 
-		return $menu;
+		try
+		{
+			$page->insert();
+		}
+		catch (PDOException $e)
+		{
+			if ($e->errorInfo[1] == 1062)
+				throw new InvalidDataException(__METHOD__, "Invalid page alias (must be unique).");
+			else if ($e->errorInfo[1] == 1452)
+				throw new InvalidDataException(__METHOD__, "Invalid layout (layout selected doesn't exist).");
+			else
+				throw $e;
+		}
+
+		return $page;
+	}
+
+	/**
+	 * Edit a page
+	 *
+	 * @param int $id_page ID of the page to edit
+	 * @param int $id_layout ID of the layout
+	 * @param string $alias_page Alias of the page
+	 * @param string $title_page Title of the page
+	 * @param string $description_page Description of the page
+	 * @param string $keywords_page Keywords Meta Tags
+	 * @param string $robots_page Robots Meta Tag
+	 * @param string $author_page Author Meta Tag
+	 * @return PageModel Page edited
+	 * @throws InvalidDataException Invalid layout, alias or title
+	 * @throws PDOException Database error when editing page
+	 */
+	public static function editPage($id_page, $id_layout, $alias_page, $title_page, $description_page, $keywords_page, $robots_page, $author_page)
+	{
+		$page = PageModel::getPage($id_page);
+		$page->set('id_layout', $id_layout);
+		$page->set('alias_page', $alias_page);
+		$page->set('title_page', $title_page);
+		$page->set('description_page', $description_page);
+		$page->set('keywords_page', $keywords_page);
+		$page->set('robots_page', $robots_page);
+		$page->set('author_page', $author_page);
+
+		try
+		{
+			$page->update();
+		}
+		catch (PDOException $e)
+		{
+			if ($e->errorInfo[1] == 1062)
+				throw new InvalidDataException(__METHOD__, "Invalid page alias (must be unique).");
+			else if ($e->errorInfo[1] == 1452)
+				throw new InvalidDataException(__METHOD__, "Invalid layout (layout selected doesn't exist).");
+			else
+				throw $e;
+		}
+
+		return $page;
 	}
 
 	/**
 	 * Get all pages in an array of PageModel
 	 *
 	 * @return array Array of PageModel representing all pages of the CMS
+	 * @throws PDOException Database error when loading page list
 	 */
 	public static function getPageList()
 	{
@@ -75,8 +162,10 @@ class PageModel extends AbstractModel
 		ORDER BY
 			`title_page` ASC";
 
+		// Execute the query and get the PDO statement
 		$listPageStatement = $connexion->query($listPageQuery);
 
+		// Create for each page its object
 		while ($row = $listPageStatement->fetch(PDO::FETCH_ASSOC))
 			$listPage[] = new PageModel($row['id_page'], $row);
 
@@ -88,6 +177,8 @@ class PageModel extends AbstractModel
 	 *
 	 * @param string $alias Alias of the page to load
 	 * @return array PageModel corresponding
+	 * @throws InvalidDataException Invalid page alias
+	 * @throws PDOException Database error when loading page
 	 */
 	public static function getPageByAlias($alias)
 	{
@@ -106,15 +197,23 @@ class PageModel extends AbstractModel
 		FROM
 			`".DB_PREFIX."page`
 		WHERE
-			`alias_page` = '".Security::in($alias)."'";
+			`alias_page` = ?";
 
-		$pageStatement = $connexion->query($pageQuery);
-		$row = $pageStatement->fetch(PDO::FETCH_ASSOC);
+		// Prepare and execute the query
+		$pageStatement = $connexion->prepare($pageQuery);
+		$pageStatement->execute(array($alias));
 
+		// If the page exists
 		if ($pageStatement->rowCount() == 1)
+		{
+			// Get its data row
+			$row = $pageStatement->fetch(PDO::FETCH_ASSOC);
+
+			// Return the model associated the the data
 			return new PageModel($row['id_page'], $row);
+		}
 		else
-			return null;
+			throw new InvalidDataException(__METHOD__, "Unknown page alias.");
 	}
 
 	/**
@@ -122,6 +221,8 @@ class PageModel extends AbstractModel
 	 *
 	 * @param int $id_page ID of the page
 	 * @return PageModel Corresponding PageModel
+	 * @throws InvalidDataException Invalid page ID
+	 * @throws PDOException Database error when loading page
 	 */
 	public static function getPage($id_page)
 	{

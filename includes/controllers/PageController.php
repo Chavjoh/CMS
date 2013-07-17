@@ -6,7 +6,7 @@
  * @version 1.0
  */
 
-class PageController extends AbstractController
+class PageController extends FrontEndController
 {
 	private $moduleList = array();
 	private $moduleSettings = array();
@@ -15,17 +15,12 @@ class PageController extends AbstractController
 	private $alias;
 
 	/**
-	* Default method called by Dispatcher
-	*
-	* @param array $arguments Arguments passed by URL to the present Controller
+	* Show page
 	*/
-	public function index(array $arguments)
+	public function index()
 	{
-		// Call to parent constructor
-		parent::index($arguments);
-
 		// TODO: Define default page.
-		$this->alias = (isset($arguments[0])) ? $arguments[0] : 'home';
+		$this->alias = (isset($this->arguments[0])) ? $this->arguments[0] : 'home';
 		$this->page = PageModel::getPageByAlias($this->alias);
 
 		// If page exists in database, gather modules list
@@ -36,9 +31,15 @@ class PageController extends AbstractController
 			foreach ($this->moduleList AS $index => $module)
 			{
 				$moduleKey = $module->get('key_module');
-				$module->loadModule();
 
-				$this->moduleObject[] = new $moduleKey($module, $this->moduleSettings[$index]);
+				try {
+					$module->loadModule();
+					$this->moduleObject[] = new $moduleKey($module, $this->moduleSettings[$index]);
+				}
+				catch (Exception $e)
+				{
+					// TODO: Process exception
+				}
 			}
 		}
 	}
@@ -105,7 +106,7 @@ class PageController extends AbstractController
 		// If page has not been found, we load the 404 error page
 		else
 		{
-			$this->skinPath = PATH_SKIN.TEMPLATE_FRONTEND.DS;
+			$this->skinPath = PATH_SKIN.TEMPLATE_FRONTEND.DS; //TODO: Mettre à jour
 			$this->templateFile = 'pageNotFound.tpl';
 			return parent::getPageContent();
 		}

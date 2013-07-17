@@ -150,6 +150,10 @@ nav a:hover {
 	margin-bottom: 13px;
 }
 
+section#logger {
+	padding: 20px 20px 0px 20px;
+}
+
 section#content {
 	padding: 10px 40px;
 }

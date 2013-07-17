@@ -6,203 +6,213 @@
  * @version 1.0
  */
 
-class AdminMenusItemsController extends AbstractController
+class AdminMenusItemsController extends BackEndController
 {
 	/**
-	 * Current URL for this controller
+	 * Current menu ID for items
 	 *
 	 * @var string
 	 */
-	protected $urlController;
-
-	/**
-	 * Current URL for the page loaded
-	 *
-	 * @var string
-	 */
-	protected $urlPage;
+	protected $id_menu;
 
 	/**
 	 * Construct controller variable
+	 *
+	 * @see BackEndController::__construct()
+	 * @throws ArgumentMissingException Missing menu ID
 	 */
-	public function __construct()
+	public function __construct(array $arguments)
 	{
-		$this->urlController = Server::getBaseUrl().URL_ADMIN.'/MenusItems/';
+		parent::__construct($arguments);
+
+		if (count($this->arguments) == 0)
+			throw new ArgumentMissingException(__METHOD__, "Menu ID is required to manage items.");
+
+		$this->id_menu = intval($this->arguments[0]);
+		$this->urlController .= 'MenusItems/'.$this->id_menu.'/';
 	}
 
 	/**
-	 * Default method called by Dispatcher
-	 *
-	 * @param array $arguments Arguments passed by URL to the present Controller
+	 * List of menu items
 	 */
-	public function index(array $arguments)
+	public function index()
 	{
-		parent::index($arguments);
-		$this->skinPath = PATH_SKIN.TEMPLATE_BACKEND.DS;
 		$this->templateFile = 'menuItemList.tpl';
 
-		// Get menu ID
-		$id_menu = (isset($arguments[0])) ? intval($arguments[0]) : 0;
-
-		// Get menu item list
-		$menuItemList = MenuItemModel::getMenuItemList($id_menu);
-		$this->smarty->assign('menuItemList', $menuItemList);
-		$this->smarty->assign('id_menu', $id_menu);
+		$this->smarty->assign('id_menu', $this->id_menu);
+		$this->smarty->assign('menuItemList', MenuItemModel::getMenuItemList($this->id_menu));
 	}
 
 	/**
 	 * Create a new menu item
 	 *
-	 * @param array $arguments Arguments passed by URL to the present Controller
+	 * @throws PDOException Database error when inserting menu item
 	 */
-	public function create(array $arguments)
+	public function create()
 	{
-		parent::index($arguments);
-
-		// Get menu ID
-		$id_menu = (isset($arguments[0])) ? intval($arguments[0]) : 0;
-
-		// Get the min and max order item in this menu
-		$orderBorder = MenuItemModel::getMinMaxOrder($id_menu);
-
 		// When a menu item is created
 		if (count($_POST) > 0)
 		{
-			// Create the menu item
-			$menu = MenuItemModel::createMenuItem(
-				$id_menu,
-				(isset($_POST['id_page'])) ? intval($_POST['id_page']) : 0,
-				(isset($_POST['name_menu_item'])) ? $_POST['name_menu_item'] : '',
-				($orderBorder['max'] + 1)
-			);
+			try
+			{
+				MenuItemModel::createMenuItem(
+					$this->id_menu,
+					(isset($_POST['id_page'])) ? intval($_POST['id_page']) : 0,
+					(isset($_POST['name_menu_item'])) ? $_POST['name_menu_item'] : ''
+				);
+			}
+			catch (InvalidDataException $e)
+			{
+				Logger::logMessage(new LoggerMessage($e->getMessage(), LoggerSeverity::WARNING));
+			}
 
-			// Redirect to the menu item list page
-			$this->header[] = "Location:" . Server::getBaseUrl() . URL_ADMIN . '/MenusItems/'.$id_menu;
+			// Redirect to the menu item list
+			$this->header[] = "Location:".$this->urlController;
 		}
+
 		// When we have to show the template to create a menu
 		else
 		{
-			$this->skinPath = PATH_SKIN.TEMPLATE_BACKEND.DS;
-			$this->smarty->assign('action', Server::getBaseUrl().URL_ADMIN.'/MenusItems/'.$id_menu.'/create/');
-			$this->smarty->assign('pageList', PageModel::getPageList());
 			$this->templateFile = 'menuItemForm.tpl';
+
+			$this->smarty->assign('action', $this->urlController.'create/');
+			$this->smarty->assign('pageList', PageModel::getPageList());
 		}
 	}
 
 	/**
 	 * Edit a menu item
 	 *
-	 * @param array $arguments Arguments passed by URL to the present Controller
+	 * @throws ArgumentMissingException Missing menu ID
+	 * @throws PDOException Database error when updating menu item
 	 */
-	public function edit(array $arguments)
+	public function edit()
 	{
-		parent::index($arguments);
-
-		// Get the menu ID
-		$id_menu = (isset($arguments[0])) ? intval($arguments[0]) : 0;
+		if (count($this->arguments) < 2)
+			throw new ArgumentMissingException(__METHOD__, "Item ID is required to edit it.");
 
 		// Get the menu item ID to edit
-		$id_menu_item = (isset($arguments[1])) ? intval($arguments[1]) : 0;
+		$id_menu_item = intval($this->arguments[1]);
 
 		// When a menu item is edited
 		if (count($_POST) > 0)
 		{
-			// Get menu item instance
-			$menu = MenuItemModel::getMenuItem($id_menu_item);
+			try
+			{
+				MenuItemModel::editMenuItem(
+					$id_menu_item,
+					$this->id_menu,
+					(isset($_POST['id_page'])) ? intval($_POST['id_page']) : 0,
+					(isset($_POST['name_menu_item'])) ? $_POST['name_menu_item'] : ''
+				);
+			}
+			catch (InvalidDataException $e)
+			{
+				Logger::logMessage(new LoggerMessage($e->getMessage(), LoggerSeverity::WARNING));
+			}
 
-			// Edit fields
-			$menu->set('id_page', intval($_POST['id_page']));
-			$menu->set('name_menu_item', $_POST['name_menu_item']);
-
-			// Save modifications
-			$menu->update();
-
-			// Redirect to the menu item list page
-			$this->header[] = "Location:" . Server::getBaseUrl() . URL_ADMIN . '/MenusItems/'.$id_menu;
+			// Redirect to the menu item list
+			$this->header[] = "Location:".$this->urlController;
 		}
+
 		// When we have to show the template to edit the menu item
 		else
 		{
-			$this->skinPath = PATH_SKIN.TEMPLATE_BACKEND.DS;
-			$this->smarty->assign('id_menu_item', $id_menu_item);
-			$this->smarty->assign('action', Server::getBaseUrl().URL_ADMIN.'/MenusItems/'.$id_menu.'/edit/'.$id_menu_item);
-			$this->smarty->assign('menuItem', MenuItemModel::getMenuItem($id_menu_item));
-			$this->smarty->assign('pageList', PageModel::getPageList());
 			$this->templateFile = 'menuItemForm.tpl';
+
+			$this->smarty->assign('id_menu_item', $id_menu_item);
+			$this->smarty->assign('action', $this->urlController.'edit/'.$id_menu_item);
+			$this->smarty->assign('pageList', PageModel::getPageList());
+
+			try
+			{
+				$this->smarty->assign('menuItem', MenuItemModel::getMenuItem($id_menu_item));
+			}
+			catch (InvalidDataException $e)
+			{
+				Logger::logMessage(new LoggerMessage($e->getMessage(), LoggerSeverity::WARNING));
+			}
 		}
 	}
 
 	/**
 	 * Delete a menu item
 	 *
-	 * @param array $arguments Arguments passed by URL to the present Controller
+	 * @throws ArgumentMissingException Missing menu ID
+	 * @throws PDOException Database error when deleting menu item
 	 */
-	public function delete(array $arguments)
+	public function delete()
 	{
-		parent::index($arguments);
+		if (count($this->arguments) < 2)
+			throw new ArgumentMissingException(__METHOD__, "Item ID is required to delete it.");
 
-		// Get the menu ID to delete
-		$id_menu = (isset($arguments[0])) ? intval($arguments[0]) : 0;
+		try
+		{
+			// Get and delete menu item
+			$menuItem = MenuItemModel::getMenuItem(intval($this->arguments[1]));
+			$menuItem->delete();
 
-		// Get the menu item ID to delete
-		$id_menu_item = (isset($arguments[1])) ? intval($arguments[1]) : 0;
-
-		// Get menu item instance
-		$menuItem = MenuItemModel::getMenuItem($id_menu_item);
-
-		// Delete menu item
-		$menuItem->delete();
+			Logger::logMessage(new LoggerMessage("Menu item successfully deleted.", LoggerSeverity::SUCCESS));
+		}
+		catch (InvalidDataException $e)
+		{
+			Logger::logMessage(new LoggerMessage($e->getMessage(), LoggerSeverity::WARNING));
+		}
 
 		// Redirect to the menu item list page
-		$this->header[] = "Location:" . Server::getBaseUrl() . URL_ADMIN . '/MenusItems/'.$id_menu;
+		$this->header[] = "Location:".$this->urlController;
 	}
 
 	/**
 	 * Order up for a menu item
 	 *
-	 * @param array $arguments Arguments passed by URL to the present Controller
-	 * @throws Exception URL arguments missing or incorrect
+	 * @throws ArgumentMissingException Missing menu ID
+	 * @throws PDOException Database error when changing menu item order
 	 */
-	public function up(array $arguments)
+	public function up()
 	{
-		parent::index($arguments);
+		if (count($this->arguments) < 2)
+			throw new ArgumentMissingException(__METHOD__, "Item ID is required to change his order.");
 
-		if (count($arguments) < 2)
-			throw new Exception("[".__METHOD__."] URL arguments are missing.");
-
-		// Get the menu ID and item ID
-		$id_menu = intval($arguments[0]);
-		$id_menu_item = intval($arguments[1]);
-
-		$item = MenuItemModel::getMenuItem($id_menu_item);
-		$item->changeOrder('up');
+		try
+		{
+			// Get menu item and change his order
+			$item = MenuItemModel::getMenuItem(intval($this->arguments[1]));
+			$item->changeOrder('up');
+		}
+		catch (InvalidDataException $e)
+		{
+			Logger::logMessage(new LoggerMessage($e->getMessage(), LoggerSeverity::WARNING));
+		}
 
 		// Redirect to the page list
-		$this->header[] = "Location:".$this->urlController.$id_menu;
+		$this->header[] = "Location:".$this->urlController;
 	}
 
 	/**
 	 * Order down for a menu item
 	 *
-	 * @param array $arguments Arguments passed by URL to the present Controller
-	 * @throws Exception URL arguments missing or incorrect
+	 * @throws ArgumentMissingException Missing menu ID
+	 * @throws PDOException Database error when changing menu item order
 	 */
-	public function down(array $arguments)
+	public function down()
 	{
-		parent::index($arguments);
+		if (count($this->arguments) < 2)
+			throw new ArgumentMissingException(__METHOD__, "Item ID is required to change his order.");
 
-		if (count($arguments) < 2)
-			throw new Exception("[".__METHOD__."] URL arguments are missing.");
-
-		// Get the menu ID and item ID
-		$id_menu = intval($arguments[0]);
-		$id_menu_item = intval($arguments[1]);
-
-		$item = MenuItemModel::getMenuItem($id_menu_item);
-		$item->changeOrder('down');
+		try
+		{
+			// Get menu item and change his order
+			$item = MenuItemModel::getMenuItem(intval($this->arguments[1]));
+			$item->changeOrder('down');
+		}
+		catch (InvalidDataException $e)
+		{
+			Logger::logMessage(new LoggerMessage($e->getMessage(), LoggerSeverity::WARNING));
+		}
 
 		// Redirect to the page list
-		$this->header[] = "Location:".$this->urlController.$id_menu;
+		$this->header[] = "Location:".$this->urlController;
 	}
 
 	/**
@@ -210,7 +220,7 @@ class AdminMenusItemsController extends AbstractController
 	 */
 	public function getPageName()
 	{
-		return 'Menus Items - Administration - '.parent::getPageName();
+		return 'Menus Items - '.parent::getPageName();
 	}
 
 	/**
@@ -224,10 +234,10 @@ class AdminMenusItemsController extends AbstractController
 	/**
 	 * @see AbstractController::getMethodPosition()
 	 */
-	public function getMethodPosition(array $arguments)
+	public static function getMethodPosition(array $urlExplode)
 	{
 		// Change position because we have the menu ID before arguments
-		return 1;
+		return parent::getMethodPosition($urlExplode) + 1;
 	}
 }
 

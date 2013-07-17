@@ -192,7 +192,7 @@ abstract class AbstractModel
 		if (count($this->bindArray) == 0)
 		{
 			// Get MySQL table columns
-			$result = $this->connexion->query('SHOW COLUMNS FROM '.$this->table);
+			$result = $this->connexion->query("SHOW COLUMNS FROM ".$this->table);
 
 			while ($row = $result->fetch(PDO::FETCH_ASSOC))
 			{
@@ -217,8 +217,8 @@ abstract class AbstractModel
 	 *
 	 * @param array $data Data array (field => value) of the current element, NULL to load it with the database
 	 * @param array $where Where condition array
-	 *
-	 * @throws Exception Exception if a field key is not found
+	 * @throws InvalidDataException Field key not found, element not found in database
+	 * @throws PDOException Database error when loading element
 	 */
 	protected function load($data = array(), $where = array())
 	{
@@ -230,8 +230,8 @@ abstract class AbstractModel
 			{
 				if (isset($value))
 					$this->set($key, $value);
-				else
-					throw new Exception("[".__METHOD__."] Data key ($key) not found during loading by parameter.");
+				//else
+				//	throw new Exception("[".__METHOD__."] Data key ($key) not found during loading by parameter.");
 			}
 		}
 		// Loading element with database
@@ -260,18 +260,26 @@ abstract class AbstractModel
 				// Get the value of the element in the database with the statement query
 				$statement->execute();
 
-				// Get all values in an assoc array
-				$result = $statement->fetch(PDO::FETCH_ASSOC);
+				if ($statement->rowCount() == 1)
+				{
+					// Get all values in an assoc array
+					$result = $statement->fetch(PDO::FETCH_ASSOC);
 
-				// Update the current element
-				foreach ($keyList as $key)
-					$this->set($key, $result[$key]);
+					// Update the current element
+					foreach ($keyList as $key)
+						$this->set($key, $result[$key]);
+				}
+				else
+					throw new InvalidDataException(__METHOD__, "Data associated with this key not found.");
 			}
 		}
 	}
 
 	/**
 	 * Insert the current element in the database
+	 *
+	 * @return int Number of rows affected by the query
+	 * @throws PDOException Database error when inserting element
 	 */
 	public function insert()
 	{
@@ -296,12 +304,12 @@ abstract class AbstractModel
 					// Set the primary key after inserting to keep this instance up to date
 					$this->set($this->primaryKey, $this->connexion->lastInsertId());
 				}
-
-				return true;
 			}
+
+			return $statement->rowCount();
 		}
 
-		return false;
+		return 0;
 	}
 
 	/**
@@ -309,8 +317,9 @@ abstract class AbstractModel
 	 *
 	 * @param array $updateFields Array of fields to be updated (not value)
 	 * @param array $where Array of where parameter (where parameter: Array(field, value, operator, conjunction)
-	 * @return bool True if the update query has occurred without error, False otherwise
-	 * @throws Exception Exception if too many fields are indicated in parameter
+	 * @return int Number of rows affected by the query
+	 * @throws Exception If too many fields are indicated in parameter
+	 * @throws PDOException Database error when updating element
 	 */
 	public function update($updateFields = array(), $where = array())
 	{
@@ -341,17 +350,19 @@ abstract class AbstractModel
 			foreach ($whereParams AS $field => $value)
 				$statement->bindValue(':'.$field, $value, $this->getPdoParameterType($this->bindArray[$field]));
 
-			return $statement->execute();
+			$statement->execute();
+			return $statement->rowCount();
 		}
 		else
-			return false;
+			return 0;
 	}
 
 	/**
 	 * Delete the current element in the database
 	 *
 	 * @param array $where Array of where parameter (where parameter: Array(field, value, operator, conjunction)
-	 * @return bool True if the delete query has occurred without error, False otherwise
+	 * @return int Number of rows affected by the query
+	 * @throws PDOException Database error when deleting element
 	 */
 	public function delete($where = array())
 	{
@@ -369,10 +380,11 @@ abstract class AbstractModel
 			foreach ($whereParams as $key => $value)
 				$statement->bindValue(':'.$key, $value, $this->getPdoParameterType($this->bindArray[$key]));
 
-			return $statement->execute();
+			$statement->execute();
+			return $statement->rowCount();
 		}
 		else
-			return false;
+			return 0;
 	}
 
 	/**

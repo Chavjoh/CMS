@@ -6,158 +6,148 @@
  * @version 1.0
  */
 
-class AdminTemplatesController extends AbstractController
+class AdminTemplatesController extends BackEndController
 {
 	/**
-	 * Default method called by Dispatcher
+	 * Construct controller variable
 	 *
-	 * @param array $arguments Arguments passed by URL to the present Controller
+	 * @see BackEndController::__construct()
 	 */
-	public function index(array $arguments)
+	public function __construct(array $arguments)
 	{
-		// General template calls
-		parent::index($arguments);
-		$this->skinPath = PATH_SKIN.TEMPLATE_BACKEND.DS;
-		$this->templateFile = 'templateList.tpl';
+		parent::__construct($arguments);
 
-		// Load pages list
-		$templateModel = new TemplateModel();
-		$this->smarty->assign('list', $templateModel->listAll()->fetchAll());
+		$this->urlController .= 'Templates/';
 	}
 
 	/**
-	 * Action for editing template settings
-	 *
-	 * @param array $arguments Arguments passed by URL to the present Controller
+	 * Template list
 	 */
-	public function edit(array $arguments)
+	public function index()
 	{
-		// General template calls
-		parent::index($arguments);
-		$this->skinPath = PATH_SKIN.TEMPLATE_BACKEND.DS;
-		$this->smarty->assign('action', Server::getBaseUrl() . 'admin/Templates/edit');
-		$this->templateFile = 'templateForm.tpl';
+		$this->templateFile = 'templateList.tpl';
+		$this->smarty->assign('templateList', TemplateModel::getTemplateList());
+	}
 
-		// Page model instanciation
-		$templateModel = new TemplateModel();
-
-		// Database write sequence if POST data have been sent
-		if (isset($_POST['name']))
+	/**
+	 * Register a template
+	 *
+	 * @throws PDOException Database error when adding a template
+	 */
+	public function create()
+	{
+		// When a template is created
+		if (count($_POST) > 0)
 		{
-			$activeImmediately = isset($_POST['active']);
-
-			// Deactivate current template for specified side
-			if ($activeImmediately)
+			try
 			{
-				$templateModel->deactivate(Security::in($_POST['side']));
+				TemplateModel::createTemplate(
+					(isset($_POST['name_template'])) ? $_POST['name_template'] : '',
+					(isset($_POST['path_template'])) ? $_POST['path_template'] : '',
+					(TemplateSide::exist($_POST['side_template'])) ? $_POST['side_template'] : TemplateSide::getDefault(),
+					(isset($_POST['active_template'])) ? 1 : 0
+				);
+			}
+			catch (InvalidDataException $e)
+			{
+				Logger::logMessage(new LoggerMessage($e->getMessage(), LoggerSeverity::WARNING));
 			}
 
-			$updates = array('name_template' => Security::in($_POST['name']),
-							 'path_template' => Security::in($_POST['path']),
-							 'type_template' => Security::in($_POST['side']),
-							 'active_template' => $activeImmediately);
-			$id = Security::in($_POST['id']);
-			$templateModel->updateOne($id, $updates);
-
-			if (!$templateModel->getActiveBySide(Security::in($_POST['side'])))
-			{
-				$templateModel->setActiveBySide(Security::in($_POST['side']));
-			}
-
-			$this->header[] = "Location:" . Server::getBaseUrl() . 'admin/Templates/index';
+			// Redirect to the template list page
+			$this->header[] = 'Location:'.$this->urlController;
 		}
 
-		// Load informations on template if POST data have not been sent
+		// When we have to show the template to create a template
 		else
 		{
-			// Load informations on desired page
-			$id = $arguments[0];
-			$result = $templateModel->getOne($id)->fetchAll();
-			$this->smarty->assign('formId', $result[0]['id_template']);
-			$this->smarty->assign('formName', $result[0]['name_template']);
-			$this->smarty->assign('formPath', $result[0]['path_template']);
-			$this->smarty->assign('formSide', $result[0]['type_template']);
-			$this->smarty->assign('formActive', $result[0]['active_template']);
+			$this->templateFile = 'templateForm.tpl';
+			$this->smarty->assign('action', $this->urlController.'create/');
 		}
 	}
 
 	/**
-	 * Action for creating new template
+	 * Edit  template
 	 *
-	 * @param array $arguments Arguments passed by URL to the present Controller
+	 * @throws PDOException Database error when editing template
+	 * @throws ArgumentMissingException Missing template ID
 	 */
-	public function create(array $arguments)
+	public function edit()
 	{
-		// General template calls
-		parent::index($arguments);
-		$this->skinPath = PATH_SKIN.TEMPLATE_BACKEND.DS;
-		$this->smarty->assign('action', Server::getBaseUrl() . 'admin/Templates/create');
-		$this->templateFile = 'templateForm.tpl';
+		if (count($this->arguments) < 1)
+			throw new ArgumentMissingException(__METHOD__, "Template ID is required to edit it.");
 
-		// Page model instanciation
-		$templateModel = new TemplateModel();
+		// Get the template ID to edit
+		$id_template = intval($this->arguments[0]);
 
-		// Database write sequence if POST data have been sent
-		if (isset($_POST['name']))
+		// When a template is edited
+		if (count($_POST) > 0)
 		{
-			$activeImmediately = isset($_POST['active']);
-
-			// Deactivate current template for specified side
-			if ($activeImmediately)
+			try
 			{
-				$templateModel->deactivate(Security::in($_POST['side']));
+				TemplateModel::editTemplate(
+					$id_template,
+					(isset($_POST['name_template'])) ? $_POST['name_template'] : '',
+					(isset($_POST['path_template'])) ? $_POST['path_template'] : '',
+					(isset($_POST['active_template'])) ? 1 : 0
+				);
+			}
+			catch (InvalidDataException $e)
+			{
+				Logger::logMessage(new LoggerMessage($e->getMessage(), LoggerSeverity::WARNING));
 			}
 
-			// Add new template
-			$values = array('name_template' => Security::in($_POST['name']),
-							'path_template' => Security::in($_POST['path']),
-							'type_template' => Security::in($_POST['side']),
-							'active_template' => $activeImmediately);
-			$templateModel->insertOne($values);
-
-			$this->header[] = "Location:" . Server::getBaseUrl() . 'admin/Templates/index';
+			// Redirect to the template list page
+			$this->header[] = 'Location:'.$this->urlController;
 		}
-	}
 
-	/**
-	 * Action for deleting a page
-	 *
-	 * @param array $arguments Arguments passed by URL to the present Controller
-	 */
-	public function delete(array $arguments)
-	{
-		// General template calls
-		parent::index($arguments);
-		$this->skinPath = PATH_SKIN.TEMPLATE_BACKEND.DS;
-		$this->templateFile = 'templateList.tpl';
-
-		// Database write sequence
-		$templateModel = new TemplateModel();
-		$id = $arguments[0];
-
-		// Check that the deleted template is not the last of its side
-		$current = $templateModel->getOne($id)->fetchAll();
-		if ($templateModel->getNumberBySide($current[0]['type_template']) > 1)
+		// When we have to show the template to edit the template
+		else
 		{
-			$templateModel->deleteOne($id);
-			if (!$templateModel->getActiveBySide($current[0]['type_template']))
+			$this->templateFile = 'templateForm.tpl';
+			$this->smarty->assign('id_template', $id_template);
+			$this->smarty->assign('action', $this->urlController.'edit/'.$id_template);
+
+			try
 			{
-				$templateModel->setActiveBySide($current[0]['type_template']);
+				$this->smarty->assign('template', TemplateModel::getTemplate($id_template));
+			}
+			catch (InvalidDataException $e)
+			{
+				Logger::logMessage(new LoggerMessage($e->getMessage(), LoggerSeverity::WARNING));
 			}
 		}
-
-		$this->header[] = "Location:" . Server::getBaseUrl() . 'admin/Templates/index';
 	}
 
 	/**
-	 * Internal call for template activation verification (at least a template must be active on each side)
+	 * Delete a template
+	 *
+	 * @throws PDOException Database error when deleting template
+	 * @throws ArgumentMissingException Missing template ID
 	 */
-	private function checkActiveTemplates()
+	public function delete()
 	{
-		// Page model instanciation
-		$templateModel = new TemplateModel();
+		if (count($this->arguments) < 1)
+			throw new ArgumentMissingException(__METHOD__, "Template ID is required to delete it.");
 
+		// Get the template ID to delete
+		$id_template = intval($this->arguments[0]);
 
+		try
+		{
+			// Get template instance and delete it
+			$template = TemplateModel::getTemplate($id_template);
+			$template->delete();
+
+			// Show a message to the final user
+			Logger::logMessage(new LoggerMessage("Template successfully deleted.", LoggerSeverity::SUCCESS));
+		}
+		catch (InvalidDataException $e)
+		{
+			Logger::logMessage(new LoggerMessage($e->getMessage(), LoggerSeverity::WARNING));
+		}
+
+		// Redirect to the template list page
+		$this->header[] = 'Location:'.$this->urlController;
 	}
 
 	/**
@@ -165,7 +155,7 @@ class AdminTemplatesController extends AbstractController
 	 */
 	public function getPageName()
 	{
-		return 'Templates - Administration - '.parent::getPageName();
+		return 'Templates - '.parent::getPageName();
 	}
 
 	/**
@@ -173,7 +163,7 @@ class AdminTemplatesController extends AbstractController
 	 */
 	public static function getMethodAvailable()
 	{
-		return array_merge(parent::getMethodAvailable(), array('edit','create','delete'));
+		return array_merge(parent::getMethodAvailable(), array('edit', 'create', 'delete'));
 	}
 }
 
