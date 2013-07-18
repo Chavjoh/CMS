@@ -8,7 +8,7 @@
 abstract class AbstractWrapper
 {
 	/**
-	 * Contains all the data can be retrieved with the wrapper
+	 * All data retrieved with the wrapper
 	 *
 	 * @var null|array
 	 */

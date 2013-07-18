@@ -7,13 +7,33 @@
 
 abstract class AbstractModule
 {
-	protected $module, $settings = null, $templateFile = "";
+	/**
+	 * ModuleModel corresponding to the current Module
+	 *
+	 * @var ModuleModel
+	 */
+	protected $module;
 
 	/**
-	 * Creation of a module
+	 * Settings for the current position of the module.
+	 * Null for Module loading in backend panel.
+	 *
+	 * @var ModulePageModel|null
+	 */
+	protected $settings = null;
+
+	/**
+	 * Template file for module content call
+	 *
+	 * @var string
+	 */
+	protected $templateFile = "";
+
+	/**
+	 * Initialization of a module to a certain position in the page
 	 *
 	 * @param ModuleModel $module ModuleModel associated
-	 * @param ModulePageModel $settings Settings for the module
+	 * @param ModulePageModel $settings Settings for the module (Null for BackEnd panel)
 	 */
 	public function __construct(ModuleModel $module, ModulePageModel $settings = null)
 	{
@@ -30,35 +50,46 @@ abstract class AbstractModule
 	}
 
 	/**
-	 * HTML content to show when the module is called
+	 * Return HTML content to show when the module is called
 	 *
 	 * @return string HTML content
 	 */
 	public function getContent()
 	{
+		// Assign settings to the template if they exist
 		if (isset($this->settings))
 			$this->smarty->assign('settings', $this->settings->getData(true));
 
+		// Show template file if defined
 		if (!empty($this->templateFile))
 			return $this->smarty->fetch($this->templateFile);
+
+		// Otherwise show an error message
 		else
-			return '<div class="alert alert-error"> ['.$this->module->get('name_module').'] Module content is missing </div> <br />';
+			return '
+			<div class="alert alert-error">
+				Module content is missing ('.$this->module->get('name_module').')
+			</div> <br />';
 	}
 
 	/**
-	 * HTML edit form to show when the module is edited
+	 * Return HTML edit form to show when the module is edited
 	 *
 	 * @return string HTML edit form
 	 */
 	public function getEditForm()
 	{
+		// Assign settings to the template if they exist
 		if (isset($this->settings))
 			$this->smarty->assign('settings', $this->settings->getData(false));
 
+		// Show template file if defined
 		if (!empty($this->templateFile))
 			return $this->smarty->fetch($this->templateFile);
+
+		// Otherwise show an error message
 		else
-			return 'Sorry, this module doesn\'t have an edit form.';
+			return 'This module doesn\'t have an edit form.';
 	}
 
 	/**
@@ -67,7 +98,7 @@ abstract class AbstractModule
 	abstract public function saveForm();
 
 	/**
-	 * Icon path of the module
+	 * Return icon path of the module
 	 *
 	 * @return string Path of the icon
 	 */
@@ -77,7 +108,7 @@ abstract class AbstractModule
 	}
 
 	/**
-	 * List of all javascript scripts needed to run the module
+	 * List of all javascripts needed to run the module
 	 *
 	 * @return array List of string representing the path of each script
 	 */
@@ -87,7 +118,7 @@ abstract class AbstractModule
 	}
 
 	/**
-	 * List of all stylesheet needed to run the module
+	 * List of all stylesheets needed to run the module
 	 *
 	 * @return array List of string representing the path of each stylesheet
 	 */
@@ -97,11 +128,11 @@ abstract class AbstractModule
 	}
 
 	/**
-	 * ModuleModel of the current module
+	 * Return the model of the current module
 	 *
 	 * @return ModuleModel Current module
 	 */
-	public function getModuleModel()
+	public final function getModuleModel()
 	{
 		return $this->module;
 	}
