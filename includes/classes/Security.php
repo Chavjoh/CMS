@@ -71,12 +71,15 @@ class Security
 			{
 				case SecurityLevel::NORMAL;
 					$data =  preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", htmlentities($data, ENT_QUOTES | ENT_HTML5, "UTF-8"));
+					break;
 
 				case SecurityLevel::ALLOW_JS:
 					$data = htmlentities($data, ENT_QUOTES | ENT_HTML5, "UTF-8");
+					break;
 
 				case SecurityLevel::ALLOW_HTML:
 					$data = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $data);
+					break;
 			}
 
 			return nl2br($data);

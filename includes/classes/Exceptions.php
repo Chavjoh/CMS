@@ -39,6 +39,11 @@ class ArgumentMissingException extends CmsException {};
  */
 class InvalidLoginPasswordException extends CmsException {};
 
+/**
+ * Class not found
+ */
+class ClassNotFoundException extends CmsException {};
+
 
 
 /**
@@ -50,11 +55,6 @@ class FatalErrorException extends CmsException {};
  * Cannot connect to the database
  */
 class DatabaseConnexionException extends FatalErrorException {};
-
-/**
- * Internal class not found
- */
-class ClassNotFoundException extends FatalErrorException {};
 
 /**
  * Class InvalidDerivationException

@@ -135,28 +135,33 @@ class Dispatcher
 		// Add prefix
 		$controller = 'Admin'.$controller;
 
-		// Get the position of the method in the URL
-		$positionMethod = abs($controller::getMethodPosition($urlExplode));
-
-		// Get method name of controller
-		$method = isset($urlExplode[$positionMethod]) ? $urlExplode[$positionMethod] : '';
-
-		// Check availability of the method called
-		if (!in_array($method, $controller::getMethodAvailable()))
+		try
 		{
-			$method = 'index';
-			$arguments = $urlExplode;
-		}
-		else
-		{
-			// Delete the URL argument processed (method name)
-			unset($urlExplode[$positionMethod]);
-			$arguments = array_values($urlExplode);
-		}
+			// Call autoloader to search class
+			class_exists($controller);
 
-		// Create controller instance
-		try {
+			// Get the position of the method in the URL
+			$positionMethod = abs($controller::getMethodPosition($urlExplode));
+
+			// Get method name of controller
+			$method = isset($urlExplode[$positionMethod]) ? $urlExplode[$positionMethod] : '';
+
+			// Check availability of the method called
+			if (!in_array($method, $controller::getMethodAvailable()))
+			{
+				$method = 'index';
+				$arguments = $urlExplode;
+			}
+			else
+			{
+				// Delete the URL argument processed (method name)
+				unset($urlExplode[$positionMethod]);
+				$arguments = array_values($urlExplode);
+			}
+
+			// Create controller instance and call appropriate method
 			$this->controller = new $controller($arguments);
+			$this->controller->$method();
 		}
 		catch (FatalErrorException $e)
 		{
@@ -164,12 +169,9 @@ class Dispatcher
 		}
 		catch (CmsException $e)
 		{
-			//TODO: ErrorController
-			$this->controller = new AdminNotFoundController($arguments);
-			$method = 'index';
+			$this->controller = new AdminErrorController(array());
+			$this->controller->setError($e);
 		}
-
-		$this->controller->$method();
 
 		// Check controller type
 		if (!($this->controller instanceof AbstractController))

@@ -25,16 +25,6 @@ class SmartyLib
 	 */
 	public static function getInstance($templateDirectory, $cache = 0)
 	{
-		/*
-		// If we're calling this method for the first time
-		if (static::$smarty == null)
-			static::createSmarty();
-		
-		// Otherwise we clear assigned variables in Smarty object
-		else
-			static::$smarty->clearAllAssign();
-		
-		*/
 		static::createSmarty();
 		
 		// Active cache if requested
