@@ -1,6 +1,7 @@
 <?php
 /**
- * Enumeration representation
+ * Enumeration representation.
+ * Inspired by SplEnum class (not available in all web hosting).
  *
  * @version 1.0
  */

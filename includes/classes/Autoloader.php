@@ -20,9 +20,9 @@ class Autoloader
 			return;
 
 		// Define path to find the class
-		if (preg_match("/Controller/i", $class))
+		if (preg_match("/Controller$/i", $class))
 			$pathClass = PATH_CONTROLLER;
-		else if (preg_match("/Model/i", $class))
+		else if (preg_match("/Model$/i", $class))
 			$pathClass = PATH_MODEL;
 		else
 			$pathClass = PATH_CLASS;

@@ -8,21 +8,21 @@
 class ConfigurationManager
 {
 	/**
-	 * Store all the information about the settings
+	 * Store all information about settings
 	 *
 	 * @var array
 	 */
 	protected static $configurationList = null;
 
 	/**
-	 * Autocommit indication
+	 * Autocommit flag
 	 *
 	 * @var bool
 	 */
 	protected static $autoCommit = true;
 
 	/**
-	 * Store all settings modification done
+	 * Store all modifications done
 	 *
 	 * @var array
 	 */
@@ -44,14 +44,15 @@ class ConfigurationManager
 	 */
 	public static function load()
 	{
-		$PDO = PDOLib::getInstance();
-		$result = $PDO->query("SELECT `key_setting`, `value_setting` FROM `".DB_PREFIX."setting`");
+		// Get all settings from database
+		$result = PDOLib::getInstance()->query("SELECT `key_setting`, `value_setting` FROM `".DB_PREFIX."setting`");
 
+		// Prepare configuration list
 		self::$configurationList = array();
 
-		foreach  ($result as $row) {
-			self::$configurationList[$row['key_setting']] = $row['value_setting'];
-		}
+		// Add each settings in cache
+		foreach ($result as $setting)
+			self::$configurationList[$setting['key_setting']] = $setting['value_setting'];
 	}
 
 	/**
@@ -67,8 +68,10 @@ class ConfigurationManager
 		// Returns the value for the specified configuration key if it exists
 		if (isset(self::$configurationList[$key]))
 			return self::$configurationList[$key];
+
+		// Otherwise return an empty string
 		else
-			return $key;
+			return '';
 	}
 
 	/**
@@ -76,8 +79,7 @@ class ConfigurationManager
 	 *
 	 * @param string $key Setting key
 	 * @param mixed $value New setting value
-	 *
-	 * @throws Exception Exception if key doesn't exist
+	 * @throws InvalidDataException If key doesn't exist
 	 */
 	public static function set($key, $value)
 	{
@@ -85,14 +87,17 @@ class ConfigurationManager
 
 		// Verify existence of the specified configuration for setting
 		if (!isset(self::$configurationList[$key]))
-			throw new Exception("[".__CLASS__."] Configuration key specified does not exist. It's therefore impossible to set.");
+			throw new InvalidDataException(__METHOD__, "Configuration key specified does not exist.");
 
+		// Save modification for database update
 		static::$modificationList[$key] = 'S';
 
+		// Update value in cache
+		self::$configurationList[$key] = $value;
+
+		// If we update database at each set function call
 		if (static::$autoCommit)
 			static::commit();
-
-		self::$configurationList[$key] = $value;
 	}
 
 	/**
@@ -100,8 +105,7 @@ class ConfigurationManager
 	 *
 	 * @param string $key Setting key
 	 * @param mixed $value Setting value
-	 *
-	 * @throws Exception Exception if key already exists
+	 * @throws InvalidDataException If key doesn't exist
 	 */
 	public static function add($key, $value)
 	{
@@ -109,22 +113,24 @@ class ConfigurationManager
 
 		// Verify lack of the specified configuration for deleting
 		if (isset(self::$configurationList[$key]))
-			throw new Exception("[".__CLASS__."] Specified configuration key already exists. It's therefore impossible to add.");
+			throw new InvalidDataException(__METHOD__, "Configuration key specified does not exist.");
 
+		// Save modification for database update
 		static::$modificationList[$key] = 'A';
 
+		// Add value in cache
+		self::$configurationList[$key] = $value;
+
+		// If we update database at each add function call
 		if (static::$autoCommit)
 			static::commit();
-
-		self::$configurationList[$key] = $value;
 	}
 
 	/**
 	 * Remove a setting
 	 *
 	 * @param string $key Setting key
-	 *
-	 * @throws Exception Exception if key doesn't exist
+	 * @throws InvalidDataException If key doesn't exist
 	 */
 	public static function remove($key)
 	{
@@ -132,14 +138,17 @@ class ConfigurationManager
 
 		// Verify existence of the specified configuration for deleting
 		if (!isset(self::$configurationList[$key]))
-			throw new Exception("[".__CLASS__."] Configuration key specified does not exist. It's therefore impossible to remove.");
+			throw new InvalidDataException(__METHOD__, "Configuration key specified does not exist.");
 
+		// Save modification for database update
 		static::$modificationList[$key] = 'R';
 
+		// Remove value in cache
+		unset(self::$configurationList[$key]);
+
+		// If we update database at each remove function call
 		if (static::$autoCommit)
 			static::commit();
-
-		unset(self::$configurationList[$key]);
 	}
 
 	/**
@@ -149,10 +158,7 @@ class ConfigurationManager
 	 */
 	public static function setAutoCommit($bool)
 	{
-		if ($bool)
-			static::$autoCommit = true;
-		else
-			static::$autoCommit = false;
+		static::$autoCommit = (bool) $bool;
 	}
 
 	/**
@@ -165,6 +171,7 @@ class ConfigurationManager
 		if (empty(static::$modificationList))
 			return 0;
 
+		// Get database link and create a transaction to ensure data integrity
 		$PDO = PDOLib::getInstance();
 		$PDO->beginTransaction();
 
@@ -206,8 +213,13 @@ class ConfigurationManager
 			}
 		}
 
+		// Commit transaction
 		$PDO->commit();
+
+		// Clear modification list
 		static::$modificationList = array();
+
+		// Returns number of database modification made
 		return $modification;
 	}
 }

@@ -1,71 +1,64 @@
 <?php
 
+/**
+ * Specialized class for CMS Exception.
+ * Contains the class and method as first argument, to show to the user when debugging
+ */
 class CmsException extends Exception
 {
 	protected $method;
 
 	public function __construct($method, $message = "", $code = 0, Exception $previous = Null)
 	{
+		// We can't re-implement getMessage function, so we modify $message here to make the same effect
 		if (DEBUG)
 			$message = "[$method] $message";
 
+		// Call parent constructor
 		parent::__construct($message, $code, $previous);
 	}
 }
 
 /**
- * Class FatalErrorException
- */
-class FatalErrorException extends CmsException {};
-
-/**
- * Class DatabaseConnexionException
- */
-class DatabaseConnexionException extends FatalErrorException {};
-
-/**
- * Class UnrecoverableException
- */
-class UnrecoverableException extends CmsException {};
-
-/**
- * Class ClassNotFoundException
- */
-class ClassNotFoundException extends UnrecoverableException {};
-
-/**
- * Class FileNotFoundException
+ * File not found
  */
 class FileNotFoundException extends CmsException {};
 
 /**
- * Class RecoverableException
+ * Some data are invalid
  */
-class RecoverableException extends CmsException {};
-
-/**
- * Class UniqueConstraintException
- */
-class UniqueConstraintException extends RecoverableException {};
-
-/**
- * Class InvalidDataException
- */
-class InvalidDataException extends RecoverableException {};
+class InvalidDataException extends CmsException {};
 
 /**
  * Class ArgumentMissingException
  */
-class ArgumentMissingException extends RecoverableException {};
-
-/**
- * Class InvalidDerivationException
- */
-class InvalidDerivationException extends RecoverableException {};
+class ArgumentMissingException extends CmsException {};
 
 /**
  * Class InvalidLoginPasswordException
  */
-class InvalidLoginPasswordException extends RecoverableException {};
+class InvalidLoginPasswordException extends CmsException {};
+
+
+
+/**
+ * Fatal error in CMS
+ */
+class FatalErrorException extends CmsException {};
+
+/**
+ * Cannot connect to the database
+ */
+class DatabaseConnexionException extends FatalErrorException {};
+
+/**
+ * Internal class not found
+ */
+class ClassNotFoundException extends FatalErrorException {};
+
+/**
+ * Class InvalidDerivationException
+ */
+class InvalidDerivationException extends FatalErrorException {};
 
 ?>

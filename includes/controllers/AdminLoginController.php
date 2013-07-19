@@ -25,7 +25,7 @@ class AdminLoginController extends BackEndController
             }
             catch (InvalidLoginPasswordException $e)
             {
-                $this->smarty->assign('error', $e->getMessage());
+				Logger::logMessage(new LoggerMessage($e->getMessage(), LoggerSeverity::WARNING));
             }
 		}
     }
