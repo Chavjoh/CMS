@@ -9,7 +9,7 @@ Content Management System
 
 ## Requirements
 
-* PHP5.3+
+* PHP 5.4+
 * Web server, for example Apache
 * PHP (with support for mbstring functions)
 * MySQL (InnoDB and version 5+ required)

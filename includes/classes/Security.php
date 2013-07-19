@@ -1,43 +1,85 @@
 <?php
+
+/**
+ * Security level for parsing with manager
+ *
+ * @version 1.0
+ */
+class SecurityLevel extends Enumeration
+{
+	const __default = self::NORMAL;
+
+	/**
+	 * For text only. Protection against HTML and JS.
+	 */
+	const NORMAL = 0;
+
+	/**
+	 * Allow HTML. Protection against HTML and JS
+	 */
+	const ALLOW_HTML = 1;
+
+	/**
+	 * Allow HTML and JS. No protection activated
+	 */
+	const ALLOW_JS = 2;
+}
+
 /**
  * Security central manager
  *
  * @version 1.0
  */
-
-class Security {
+class Security
+{
     /**
      * Input security procedure
      *
      * @param string $data : ingoing data to secure
-     * @return secured data
+     * @return Secured data
      */
     public static function in($data)
     {
         if (ctype_digit($data))
             return intval($data);
         else
-            return trim($data);
+            return trim(addslashes($data));
     }
 
-    /**
-     * Output security procedure
-     *
-     * @param string $data : outgoing data to secure
-     * @return secured data
-     */
-    public static function out($data)
+	/**
+	 * Output security procedure
+	 *
+	 * @param string|array $data Outgoing data to secure
+	 * @param int $level Security level provided by SecurityLevel class
+	 * @return array|string Secured data
+	 */
+	public static function out($data, $level = SecurityLevel::__default)
     {
+		// If we receive an array, we apply this function for each element of it
 		if (is_array($data))
 		{
 			foreach ($data as $key => $value)
-				$data[Security::out($key)] = Security::out($value);
+				$data[Security::out($key, $level)] = Security::out($value, $level);
 
 			return $data;
 		}
+		// Security for current data string
 		else
 		{
-			return nl2br(htmlentities($data, ENT_QUOTES, "UTF-8"));
+			// Depending of the security level indicated
+			switch ($level)
+			{
+				case SecurityLevel::NORMAL;
+					$data =  preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", htmlentities($data, ENT_QUOTES | ENT_HTML5, "UTF-8"));
+
+				case SecurityLevel::ALLOW_JS:
+					$data = htmlentities($data, ENT_QUOTES | ENT_HTML5, "UTF-8");
+
+				case SecurityLevel::ALLOW_HTML:
+					$data = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $data);
+			}
+
+			return nl2br($data);
 		}
     }
 
@@ -49,7 +91,7 @@ class Security {
      */
     public static function passwordHash($password)
     {
-        return sha1($password);
+        return sha1(PASSWORD_SALT.$password);
     }
 }
 ?>
