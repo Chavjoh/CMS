@@ -57,6 +57,7 @@ abstract class AbstractModel
 		{
 			$this->createBindArray();
 			BindArrayCache::set($this->table, $this->bindArray);
+			BindArrayCache::updateCacheFile();
 		}
 
 		// If the ID is null, we stop the constructor here

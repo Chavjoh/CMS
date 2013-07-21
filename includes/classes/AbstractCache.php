@@ -50,7 +50,7 @@ abstract class AbstractCache implements Cache
 		if (static::exist($key))
 			return self::$cache[get_called_class()][$key];
 		else
-			return $key;
+			return "[$key]";
 	}
 
 	/**
@@ -76,9 +76,6 @@ abstract class AbstractCache implements Cache
 
 		// Update the cache
 		self::$cache[get_called_class()][$key] = $value;
-
-		// Update the cache file
-		static::updateCacheFile();
 	}
 
 	/**

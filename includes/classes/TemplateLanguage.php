@@ -5,7 +5,7 @@
  * @version 1.0
  */
 
-class TemplateLanguage extends KeyValueCache
+class TemplateLanguage extends LanguageCache
 {
 	/**
 	 * Set file cache path.
