@@ -33,6 +33,7 @@ define('PASSWORD_SALT', 'Zg=Wu[pr18bl6-X');
 define('PATH_CLASS', 'includes'. DS .'classes'. DS);
 define('PATH_CONTROLLER', 'includes'. DS .'controllers'. DS);
 define('PATH_MODEL', 'includes'. DS .'models'. DS);
+define('PATH_LANGUAGE', 'includes'. DS .'languages'. DS);
 define('PATH_COMPILE', 'includes'. DS .'compiles'. DS);
 define('PATH_WRAPPER', 'includes'. DS .'wrappers'. DS);
 define('PATH_MODULE', 'includes'. DS .'modules'. DS);
@@ -54,6 +55,7 @@ define('TEMPLATE_FRONTEND', 'frontend');
 define('TEMPLATE_BACKEND', 'backend');
 define('TEMPLATE_DESIGN', 'templates'.DS.'design.tpl');
 define('TEMPLATE_AJAX', 'templates'.DS.'ajax.tpl');
+define('TEMPLATE_LANGUAGE', 'languages'.DS);
 
 // Smarty Library
 require_once 'includes'.DS.'smarty'.DS.'Smarty.class.php';

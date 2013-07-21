@@ -1,11 +1,11 @@
 <?php
 /**
- * Cache for Bind Array
+ * Language class for CMS translation
  *
  * @version 1.0
  */
 
-class BindArrayCache extends SerializedArrayCache
+class Language extends KeyValueCache
 {
 	/**
 	 * Set file cache path.
@@ -13,7 +13,8 @@ class BindArrayCache extends SerializedArrayCache
 	 */
 	public static function setCacheFile()
 	{
-		self::$cacheFile = PATH_CACHE."bindArray.cache";
+		// TODO: Change to real value
+		self::$cacheFile = PATH_LANGUAGE."en.txt";
 	}
 }
 

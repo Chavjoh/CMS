@@ -3,12 +3,12 @@
  * Content Management System
  * Modular and multifunctional CMS
  * 
- * Release :	1.0.0 (format: <major>.<minor>.<patch>)
+ * Release : 1.0.0 (format: <major>.<minor>.<patch>)
  * 
- * @copyright	Copyright (c) 2013
- * @author		Chavjoh
- * @link		http://www.chavjoh.ch
- * @license		-
+ * @copyright Copyright (c) 2013
+ * @author Chavjoh
+ * @link http://www.chavjoh.ch
+ * @license -
  */
 
 // Include configuration and autoloader

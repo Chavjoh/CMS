@@ -16,13 +16,6 @@ class Dispatcher
 	private $url;
 	
 	/**
-	 * Indication if we are in the backend
-	 * 
-	 * @var boolean
-	 */
-	private $isAdminSection;
-	
-	/**
 	 * Controller object of the current page
 	 * 
 	 * @var AbstractController
@@ -100,7 +93,7 @@ class Dispatcher
 	 */
 	private function dispatchFrontEnd($urlExplode)
 	{
-		$this->isAdminSection = false;
+		define('ADMIN_SECTION', false);
 
 		$this->controller = new PageController($urlExplode);
 
@@ -121,7 +114,7 @@ class Dispatcher
 	 */
 	private function dispatchBackEnd($urlExplode)
 	{
-		$this->isAdminSection = true;
+		define('ADMIN_SECTION', true);
 
 		// Get controller name
 		if (Login::isLogged())

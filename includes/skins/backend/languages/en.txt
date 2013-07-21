@@ -1,0 +1,5 @@
+Admin.Login.Title=Administration Interface
+Admin.Login.Text=You must login ...
+Admin.Login.Username=Username
+Admin.Login.Password=Password
+Admin.Login.SignIn=Sign in

@@ -89,7 +89,7 @@ abstract class AbstractModule
 
 		// Otherwise show an error message
 		else
-			return 'This module doesn\'t have an edit form.';
+			return "This module doesn't have an edit form.";
 	}
 
 	/**

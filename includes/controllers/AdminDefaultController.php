@@ -1,6 +1,7 @@
 <?php
 /**
  * BackEnd Default Controller
+ *
  * Manage index page of admin backend
  *
  * @version 1.0

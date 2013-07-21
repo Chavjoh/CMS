@@ -33,17 +33,14 @@ class SecurityLevel extends Enumeration
 class Security
 {
     /**
-     * Input security procedure
+     * Clean data
      *
-     * @param string $data : ingoing data to secure
-     * @return Secured data
+     * @param string $data Ingoing data to clean
+     * @return Cleaned data
      */
-    public static function in($data)
+    public static function clean($data)
     {
-        if (ctype_digit($data))
-            return intval($data);
-        else
-            return trim(addslashes($data));
+        return trim($data);
     }
 
 	/**
@@ -70,7 +67,7 @@ class Security
 			switch ($level)
 			{
 				case SecurityLevel::NORMAL;
-					$data =  preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", htmlentities($data, ENT_QUOTES | ENT_HTML5, "UTF-8"));
+					$data = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", htmlentities($data, ENT_QUOTES | ENT_HTML5, "UTF-8"));
 					break;
 
 				case SecurityLevel::ALLOW_JS:
