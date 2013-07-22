@@ -22,13 +22,16 @@ abstract class LanguageCache extends KeyValueCache
 		$translation = parent::get($key);
 
 		// If we ask for word replacement in translation
-		if (count($argumentList) >= 1 AND is_array($argumentList[1]))
+		if (count($argumentList) > 1)
 		{
+			// Get values ​​to replace found items
+			if (!is_array($argumentList[1]))
+				$values = array($argumentList[1]);
+			else
+				$values = $argumentList[1];
+
 			// Search all %NUMBER elements
 			preg_match_all("/%[0-9]*/i", $translation, $matches);
-
-			// Get values ​​to replace found items
-			$values = $argumentList[1];
 
 			// For each element found
 			foreach ($matches[0] AS $index => $match)

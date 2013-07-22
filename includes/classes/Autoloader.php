@@ -35,7 +35,7 @@ class Autoloader
 		
 		// Check file existence
 		if (!file_exists($file))
-			throw new FileNotFoundException(__METHOD__, "File ($file) not found.");
+			throw new FileNotFoundException(__METHOD__, Language::get('Autoloader.FileNotFoundException', array($file)));
 		else
 		{
 			// Import file
@@ -43,7 +43,7 @@ class Autoloader
 
 			// Check presence of the class or interface in the file 
 			if (!class_exists($class, FALSE) AND !interface_exists($class, FALSE))
-				throw new ClassNotFoundException(__METHOD__, "Class ($class) not found.");
+				throw new ClassNotFoundException(__METHOD__, Language::get('Autoloader.ClassNotFoundException', array($class)));
 		}
 	}
 }

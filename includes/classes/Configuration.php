@@ -90,7 +90,7 @@ class Configuration
 
 		// Verify existence of the specified configuration for setting
 		if (!isset(self::$configurationList[$key]))
-			throw new InvalidDataException(__METHOD__, "Configuration key specified does not exist.");
+			throw new InvalidDataException(__METHOD__, Language::get('Configuration.InvalidDataException.KeyNotFound'));
 
 		// Save modification for database update
 		static::$modificationList[$key] = 'S';
@@ -116,7 +116,7 @@ class Configuration
 
 		// Verify lack of the specified configuration for deleting
 		if (isset(self::$configurationList[$key]))
-			throw new InvalidDataException(__METHOD__, "Configuration key specified does not exist.");
+			throw new InvalidDataException(__METHOD__, Language::get('Configuration.InvalidDataException.KeyNotFound'));
 
 		// Save modification for database update
 		static::$modificationList[$key] = 'A';
@@ -141,7 +141,7 @@ class Configuration
 
 		// Verify existence of the specified configuration for deleting
 		if (!isset(self::$configurationList[$key]))
-			throw new InvalidDataException(__METHOD__, "Configuration key specified does not exist.");
+			throw new InvalidDataException(__METHOD__, Language::get('Configuration.InvalidDataException.KeyNotFound'));
 
 		// Save modification for database update
 		static::$modificationList[$key] = 'R';

@@ -22,7 +22,9 @@ class AdminLoginController extends BackEndController
 			try
             {
                 Login::connect($_POST['username'], $_POST['password']);
-				$this->header[] = 'Location: '.Server::getCurrentUrl();
+
+				// Redirect to BackEnd home
+				$this->header[] = 'Location: '.$this->urlController;
             }
             catch (InvalidLoginPasswordException $e)
             {
@@ -37,6 +39,9 @@ class AdminLoginController extends BackEndController
 	public function disconnect()
 	{
 		Login::disconnect();
+
+		// Redirect to BackEnd home (login page)
+		$this->header[] = 'Location:'.$this->urlController;
 	}
 	
     /**

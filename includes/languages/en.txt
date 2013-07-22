@@ -1,0 +1,7 @@
+Module.ContentMissing=Module content is missing (%1).
+Module.EditFormMissing=This module doesn't have an edit form.
+Autoloader.FileNotFoundException=File (%1) not found.
+Autoloader.ClassNotFoundException=Class or interface (%1) not found.
+Configuration.InvalidDataException.KeyNotFound=Configuration key specified does not exist.
+Dispatcher.InvalidDerivationException=Controller must be derived from AbstractController.
+Login.InvalidLoginPasswordException=Bad login or password

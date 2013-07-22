@@ -41,7 +41,7 @@ class PDOLib
 	{
 		try {
 			// Creates Data Source Name (contains the information required to connect to the database)
-			$dsn = DB_DRIVER.':host='.DB_HOST.';dbname='.DB_NAME.'';//.';port='.DB_PORT;
+			$dsn = DB_DRIVER.':host='.DB_HOST.';dbname='.DB_NAME.';port='.DB_PORT;
 
 			// Creates PDO object used as a link to the database
 			static::$database = new PDO($dsn, DB_USER, DB_PASSWORD, array(

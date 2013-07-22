@@ -71,7 +71,7 @@ abstract class AbstractModule
 		else
 			return '
 			<div class="alert alert-error">
-				Module content is missing ('.$this->module->get('name_module').')
+				'.Language::get('Module.ContentMissing', array($this->module->get('name_module'))).'
 			</div> <br />';
 	}
 
@@ -92,7 +92,7 @@ abstract class AbstractModule
 
 		// Otherwise show an error message
 		else
-			return "This module doesn't have an edit form.";
+			return Language::get('Module.EditFormMissing');
 	}
 
 	/**
