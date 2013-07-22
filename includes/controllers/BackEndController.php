@@ -27,6 +27,6 @@ abstract class BackEndController extends AbstractController
 	 */
 	public function getPageName()
 	{
-		return 'Administration - '.parent::getPageName();
+		return Language::get(__CLASS__.'.PageTitle').' - '.parent::getPageName();
 	}
 }

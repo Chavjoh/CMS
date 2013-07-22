@@ -46,6 +46,6 @@ class AdminSettingsController extends BackEndController
 	 */
 	public function getPageName()
 	{
-		return 'Settings - '.parent::getPageName();
+		return Language::get(__CLASS__.'.PageTitle').' - '.parent::getPageName();
 	}
 }

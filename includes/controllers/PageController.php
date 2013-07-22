@@ -110,7 +110,7 @@ class PageController extends FrontEndController
 		// If page has not been found, we load the 404 error page
 		else
 		{
-			$this->skinPath = PATH_SKIN.TEMPLATE_FRONTEND.DS; //TODO: Mettre à jour
+			$this->skinPath = PATH_SKIN.TEMPLATE_FRONTEND.DS; //TODO: Update with new template model
 			$this->templateFile = 'pageNotFound.tpl';
 			return parent::getPageContent();
 		}

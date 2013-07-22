@@ -59,7 +59,7 @@ class AdminErrorController extends BackEndController
 		{
 			case "FileNotFoundException";
 			case "ClassNotFoundException";
-				return 'Page not found - '.parent::getPageName();
+				return Language::get(__CLASS__.'.PageTitle.NotFound').' - '.parent::getPageName();
 
 			default:
 				parent::getPageName();

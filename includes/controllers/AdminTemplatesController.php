@@ -78,7 +78,7 @@ class AdminTemplatesController extends BackEndController
 	public function edit()
 	{
 		if (count($this->arguments) < 1)
-			throw new ArgumentMissingException(__METHOD__, "Template ID is required to edit it.");
+			throw new ArgumentMissingException(__METHOD__, Language::get(__CLASS__.'.ArgumentMissingException.TemplateID'));
 
 		// Get the template ID to edit
 		$id_template = intval($this->arguments[0]);
@@ -113,6 +113,7 @@ class AdminTemplatesController extends BackEndController
 
 			try
 			{
+				// Try to load template indicated
 				$this->smarty->assign('template', TemplateModel::getTemplate($id_template));
 			}
 			catch (InvalidDataException $e)
@@ -131,7 +132,7 @@ class AdminTemplatesController extends BackEndController
 	public function delete()
 	{
 		if (count($this->arguments) < 1)
-			throw new ArgumentMissingException(__METHOD__, "Template ID is required to delete it.");
+			throw new ArgumentMissingException(__METHOD__, Language::get(__CLASS__.'.ArgumentMissingException.TemplateID'));
 
 		// Get the template ID to delete
 		$id_template = intval($this->arguments[0]);
@@ -143,7 +144,7 @@ class AdminTemplatesController extends BackEndController
 			$template->delete();
 
 			// Show a message to the final user
-			Logger::logMessage(new LoggerMessage("Template successfully deleted.", LoggerSeverity::SUCCESS));
+			Logger::logMessage(new LoggerMessage(Language::get(__CLASS__.'.DeleteSuccess'), LoggerSeverity::SUCCESS));
 		}
 		catch (InvalidDataException $e)
 		{
@@ -159,7 +160,7 @@ class AdminTemplatesController extends BackEndController
 	 */
 	public function getPageName()
 	{
-		return 'Templates - '.parent::getPageName();
+		return Language::get(__CLASS__.'.PageTitle').' - '.parent::getPageName();
 	}
 
 	/**

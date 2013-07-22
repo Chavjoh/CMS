@@ -71,7 +71,7 @@ abstract class AbstractModule
 		else
 			return '
 			<div class="alert alert-error">
-				'.Language::get('Module.ContentMissing', array($this->module->get('name_module'))).'
+				'.Language::get(__CLASS__.'.ContentMissing', array($this->module->get('name_module'))).'
 			</div> <br />';
 	}
 
@@ -92,7 +92,7 @@ abstract class AbstractModule
 
 		// Otherwise show an error message
 		else
-			return Language::get('Module.EditFormMissing');
+			return Language::get(__CLASS__.'.EditFormMissing');
 	}
 
 	/**

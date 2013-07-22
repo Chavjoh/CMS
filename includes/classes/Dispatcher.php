@@ -103,7 +103,7 @@ class Dispatcher
 
 		// Check controller type
 		if (!($this->controller instanceof AbstractController))
-			throw new InvalidDerivationException(Language::get('Dispatcher.InvalidDerivationException'));
+			throw new InvalidDerivationException(Language::get(__CLASS__.'.InvalidDerivationException'));
 
 		// Call the index method with arguments
 		$this->controller->index();
@@ -172,7 +172,7 @@ class Dispatcher
 
 		// Check controller type
 		if (!($this->controller instanceof AbstractController))
-			throw new InvalidDerivationException(Language::get('Dispatcher.InvalidDerivationException'));
+			throw new InvalidDerivationException(Language::get(__CLASS__.'.InvalidDerivationException'));
 	}
 	
 	/**

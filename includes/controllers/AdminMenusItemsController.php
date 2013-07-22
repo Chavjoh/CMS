@@ -30,7 +30,7 @@ class AdminMenusItemsController extends BackEndController
 		parent::__construct($arguments);
 
 		if (count($this->arguments) == 0)
-			throw new ArgumentMissingException(__METHOD__, "Menu ID is required to manage items.");
+			throw new ArgumentMissingException(__METHOD__, Language::get(__CLASS__.'.ArgumentMissingException.MenuID'));
 
 		$this->id_menu = intval($this->arguments[0]);
 		$this->urlController .= 'MenusItems/'.$this->id_menu.'/';
@@ -93,7 +93,7 @@ class AdminMenusItemsController extends BackEndController
 	public function edit()
 	{
 		if (count($this->arguments) < 2)
-			throw new ArgumentMissingException(__METHOD__, "Item ID is required to edit it.");
+			throw new ArgumentMissingException(__METHOD__, Language::get(__CLASS__.'.ArgumentMissingException.MenuItemID'));
 
 		// Get the menu item ID to edit
 		$id_menu_item = intval($this->arguments[1]);
@@ -130,6 +130,7 @@ class AdminMenusItemsController extends BackEndController
 
 			try
 			{
+				// Try to load menu item indicated
 				$this->smarty->assign('menuItem', MenuItemModel::getMenuItem($id_menu_item));
 			}
 			catch (InvalidDataException $e)
@@ -148,7 +149,7 @@ class AdminMenusItemsController extends BackEndController
 	public function delete()
 	{
 		if (count($this->arguments) < 2)
-			throw new ArgumentMissingException(__METHOD__, "Item ID is required to delete it.");
+			throw new ArgumentMissingException(__METHOD__, Language::get(__CLASS__.'.ArgumentMissingException.MenuItemID'));
 
 		try
 		{
@@ -156,7 +157,7 @@ class AdminMenusItemsController extends BackEndController
 			$menuItem = MenuItemModel::getMenuItem(intval($this->arguments[1]));
 			$menuItem->delete();
 
-			Logger::logMessage(new LoggerMessage("Menu item successfully deleted.", LoggerSeverity::SUCCESS));
+			Logger::logMessage(new LoggerMessage(Language::get(__CLASS__.'.DeleteSuccess'), LoggerSeverity::SUCCESS));
 		}
 		catch (InvalidDataException $e)
 		{
@@ -176,7 +177,7 @@ class AdminMenusItemsController extends BackEndController
 	public function up()
 	{
 		if (count($this->arguments) < 2)
-			throw new ArgumentMissingException(__METHOD__, "Item ID is required to change his order.");
+			throw new ArgumentMissingException(__METHOD__, Language::get(__CLASS__.'.ArgumentMissingException.MenuItemID'));
 
 		try
 		{
@@ -202,7 +203,7 @@ class AdminMenusItemsController extends BackEndController
 	public function down()
 	{
 		if (count($this->arguments) < 2)
-			throw new ArgumentMissingException(__METHOD__, "Item ID is required to change his order.");
+			throw new ArgumentMissingException(__METHOD__, Language::get(__CLASS__.'.ArgumentMissingException.MenuItemID'));
 
 		try
 		{
@@ -224,7 +225,7 @@ class AdminMenusItemsController extends BackEndController
 	 */
 	public function getPageName()
 	{
-		return 'Menus Items - '.parent::getPageName();
+		return Language::get(__CLASS__.'.PageTitle').' - '.parent::getPageName();
 	}
 
 	/**

@@ -64,7 +64,7 @@ class Login
 
 		// Bad login
 		else
-			throw new InvalidLoginPasswordException(__METHOD__, Language::get('Login.InvalidLoginPasswordException'));
+			throw new InvalidLoginPasswordException(__METHOD__, Language::get(__CLASS__.'.InvalidLoginPasswordException'));
 	}
 
 	/**

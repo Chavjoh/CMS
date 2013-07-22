@@ -35,8 +35,8 @@ class AdminModulesController extends BackEndController
 				$module->loadModule();
 
 				// Check if the module class was loaded
-				if (!class_exists($moduleKey, FALSE))
-					Logger::logMessage(new LoggerMessage("Class ($moduleKey) not found.", LoggerSeverity::ERROR));
+				if (!class_exists($moduleKey, False))
+					Logger::logMessage(new LoggerMessage(Language::get('Autoloader.ClassNotFoundException', $moduleKey), LoggerSeverity::ERROR));
 				else
 					$moduleObject[$moduleKey] = new $moduleKey($module);
 			}
@@ -56,6 +56,6 @@ class AdminModulesController extends BackEndController
 	 */
 	public function getPageName()
 	{
-		return 'Modules - '.parent::getPageName();
+		return Language::get(__CLASS__.'.PageTitle').' - '.parent::getPageName();
 	}
 }

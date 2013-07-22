@@ -76,7 +76,7 @@ class AdminMenusController extends BackEndController
 	public function edit()
 	{
 		if (count($this->arguments) < 1)
-			throw new ArgumentMissingException(__METHOD__, "Menu ID is required to edit it.");
+			throw new ArgumentMissingException(__METHOD__, Language::get(__CLASS__.'.ArgumentMissingException.MenuID'));
 
 		// Get the menu ID to edit
 		$id_menu = intval($this->arguments[0]);
@@ -110,6 +110,7 @@ class AdminMenusController extends BackEndController
 
 			try
 			{
+				// Try to load menu indicated
 				$this->smarty->assign('menu', MenuModel::getMenu($id_menu));
 			}
 			catch (InvalidDataException $e)
@@ -128,7 +129,7 @@ class AdminMenusController extends BackEndController
 	public function delete()
 	{
 		if (count($this->arguments) < 1)
-			throw new ArgumentMissingException(__METHOD__, "Menu ID is required to delete it.");
+			throw new ArgumentMissingException(__METHOD__, Language::get(__CLASS__.'.ArgumentMissingException.MenuID'));
 
 		// Get the menu ID to delete
 		$id_menu = (isset($this->arguments[0])) ? intval($this->arguments[0]) : 0;
@@ -139,7 +140,7 @@ class AdminMenusController extends BackEndController
 			$menu = MenuModel::getMenu($id_menu);
 			$menu->delete();
 
-			Logger::logMessage(new LoggerMessage("Menu successfully deleted.", LoggerSeverity::SUCCESS));
+			Logger::logMessage(new LoggerMessage(Language::get(__CLASS__.'.DeleteSuccess'), LoggerSeverity::SUCCESS));
 		}
 		catch (InvalidDataException $e)
 		{
@@ -155,7 +156,7 @@ class AdminMenusController extends BackEndController
 	 */
 	public function getPageName()
 	{
-		return 'Menus - '.parent::getPageName();
+		return Language::get(__CLASS__.'.PageTitle').' - '.parent::getPageName();
 	}
 
 	/**

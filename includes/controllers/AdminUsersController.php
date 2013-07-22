@@ -78,7 +78,7 @@ class AdminUsersController extends BackEndController
 	public function edit()
 	{
 		if (count($this->arguments) < 1)
-			throw new ArgumentMissingException(__METHOD__, "User ID is required to edit it.");
+			throw new ArgumentMissingException(__METHOD__, Language::get(__CLASS__.'.ArgumentMissingException.UserID'));
 
 		// Get the user ID to edit
 		$id_user = intval($this->arguments[0]);
@@ -114,6 +114,7 @@ class AdminUsersController extends BackEndController
 
 			try
 			{
+				// Try to load the user indicated
 				$this->smarty->assign('user', UserModel::getUser($id_user));
 			}
 			catch (InvalidDataException $e)
@@ -132,7 +133,7 @@ class AdminUsersController extends BackEndController
 	public function delete()
 	{
 		if (count($this->arguments) < 1)
-			throw new ArgumentMissingException(__METHOD__, "User ID is required to delete it.");
+			throw new ArgumentMissingException(__METHOD__, Language::get(__CLASS__.'.ArgumentMissingException.UserID'));
 
 		// Get the user ID to delete
 		$id_user = intval($this->arguments[0]);
@@ -147,7 +148,7 @@ class AdminUsersController extends BackEndController
 			if ($_SESSION['id_user'] == $id_user)
 				Login::disconnect();
 
-			Logger::logMessage(new LoggerMessage("User successfully deleted.", LoggerSeverity::SUCCESS));
+			Logger::logMessage(new LoggerMessage(Language::get(__CLASS__.'.DeleteSuccess'), LoggerSeverity::SUCCESS));
 		}
 		catch (InvalidDataException $e)
 		{
@@ -163,7 +164,7 @@ class AdminUsersController extends BackEndController
 	 */
 	public function getPageName()
 	{
-		return 'Users - '.parent::getPageName();
+		return Language::get(__CLASS__.'.PageTitle').' - '.parent::getPageName();
 	}
 
 	/**

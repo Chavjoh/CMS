@@ -49,7 +49,7 @@ class AdminLoginController extends BackEndController
      */
 	public function getPageName()
 	{
-		return 'Login - '.parent::getPageName();
+		return Language::get(__CLASS__.'.PageTitle').' - '.parent::getPageName();
 	}
 
 	/**

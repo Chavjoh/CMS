@@ -87,7 +87,7 @@ class AdminPagesController extends BackEndController
 	public function edit()
 	{
 		if (count($this->arguments) < 1)
-			throw new ArgumentMissingException(__METHOD__, "Page ID is required to edit it.");
+			throw new ArgumentMissingException(__METHOD__, Language::get(__CLASS__.'.ArgumentMissingException.PageID'));
 
 		// Get the page ID to edit
 		$id_page = intval($this->arguments[0]);
@@ -130,6 +130,7 @@ class AdminPagesController extends BackEndController
 
 			try
 			{
+				// Try to load page indicated
 				$this->smarty->assign('page', PageModel::getPage($id_page));
 			}
 			catch (InvalidDataException $e)
@@ -148,7 +149,7 @@ class AdminPagesController extends BackEndController
 	public function delete()
 	{
 		if (count($this->arguments) < 1)
-			throw new ArgumentMissingException(__METHOD__, "Page ID is required to delete it.");
+			throw new ArgumentMissingException(__METHOD__, Language::get(__CLASS__.'.ArgumentMissingException.PageID'));
 
 		// Get the page ID to delete
 		$id_page = intval($this->arguments[0]);
@@ -159,7 +160,7 @@ class AdminPagesController extends BackEndController
 			$page = PageModel::getPage($id_page);
 			$page->delete();
 
-			Logger::logMessage(new LoggerMessage("Page successfully deleted.", LoggerSeverity::SUCCESS));
+			Logger::logMessage(new LoggerMessage(Language::get(__CLASS__.'.DeleteSuccess'), LoggerSeverity::SUCCESS));
 		}
 		catch (InvalidDataException $e)
 		{
@@ -178,7 +179,7 @@ class AdminPagesController extends BackEndController
 	public function addModule()
 	{
 		if (count($this->arguments) < 1)
-			throw new ArgumentMissingException(__METHOD__, "Page ID is required to add a module.");
+			throw new ArgumentMissingException(__METHOD__, Language::get(__CLASS__.'.ArgumentMissingException.PageID'));
 
 		$id_page = intval($this->arguments[0]);
 
@@ -209,7 +210,7 @@ class AdminPagesController extends BackEndController
 	public function editModule()
 	{
 		if (count($this->arguments) < 2)
-			throw new ArgumentMissingException(__METHOD__, "Page ID and module position are required to change module order.");
+			throw new ArgumentMissingException(__METHOD__, Language::get(__CLASS__.'.ArgumentMissingException.PageID+ModulePosition'));
 
 		$id_page = intval($this->arguments[0]);
 		$positionModule = intval($this->arguments[1]);
@@ -246,7 +247,7 @@ class AdminPagesController extends BackEndController
 	public function upModule()
 	{
 		if (count($this->arguments) < 2)
-			throw new ArgumentMissingException(__METHOD__, "Page ID and module position are required to change module order.");
+			throw new ArgumentMissingException(__METHOD__, Language::get(__CLASS__.'.ArgumentMissingException.PageID+ModulePosition'));
 
 		$id_page = intval($this->arguments[0]);
 		$positionModule = intval($this->arguments[1]);
@@ -276,7 +277,7 @@ class AdminPagesController extends BackEndController
 	public function downModule()
 	{
 		if (count($this->arguments) < 2)
-			throw new ArgumentMissingException(__METHOD__, "Page ID and module position are required to change module order.");
+			throw new ArgumentMissingException(__METHOD__, Language::get(__CLASS__.'.ArgumentMissingException.PageID+ModulePosition'));
 
 		$id_page = intval($this->arguments[0]);
 		$positionModule = intval($this->arguments[1]);
@@ -306,7 +307,7 @@ class AdminPagesController extends BackEndController
 	public function deleteModule()
 	{
 		if (count($this->arguments) < 2)
-			throw new ArgumentMissingException(__METHOD__, "Page ID and module position are required to delete a module.");
+			throw new ArgumentMissingException(__METHOD__, Language::get(__CLASS__.'.ArgumentMissingException.PageID+ModulePosition'));
 
 		$id_page = intval($this->arguments[0]);
 		$positionModule = intval($this->arguments[1]);
@@ -333,7 +334,7 @@ class AdminPagesController extends BackEndController
 	 */
 	public function getPageName()
 	{
-		return 'Pages - '.parent::getPageName();
+		return Language::get(__CLASS__.'.PageTitle').' - '.parent::getPageName();
 	}
 
 	/**

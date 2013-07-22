@@ -25,6 +25,6 @@ class AdminDefaultController extends BackEndController
 	 */
 	public function getPageName()
 	{
-		return 'Home - '.parent::getPageName();
+		return Language::get(__CLASS__.'.PageTitle').' - '.parent::getPageName();
 	}
 }
