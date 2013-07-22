@@ -3,7 +3,10 @@
 /**
  * Enumeration of all Severity possible for LoggerMessage
  *
- * @version 1.0
+ * @package CMS
+ * @subpackage Logger
+ * @author Chavjoh
+ * @since 1.0.0
  */
 class LoggerSeverity extends Enumeration
 {
@@ -18,7 +21,10 @@ class LoggerSeverity extends Enumeration
 /**
  * Class representing a message to show to the user
  *
- * @version 1.0
+ * @package CMS
+ * @subpackage Logger
+ * @author Chavjoh
+ * @since 1.0.0
  */
 class LoggerMessage
 {
@@ -99,7 +105,10 @@ class LoggerMessage
 /**
  * Logger for message to the user and error backup
  *
- * @version 1.0
+ * @package CMS
+ * @subpackage Logger
+ * @author Chavjoh
+ * @since 1.0.0
  */
 class Logger
 {
@@ -142,13 +151,11 @@ class Logger
 
 	public static function errorHandler($errorNumber, $errorString, $errorFile, $errorLine)
 	{
-
+		// TODO: Error Handler
 	}
 
 	public static function exceptionHandler($message, Exception $e)
 	{
-
+		// TODO: Exception Handler
 	}
 }
-
-?>

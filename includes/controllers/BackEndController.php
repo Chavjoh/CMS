@@ -1,10 +1,13 @@
 <?php
+
 /**
  * Abstract BackEnd Default Controller
  *
- * @version 1.0
+ * @package CMS
+ * @subpackage Controller
+ * @author Chavjoh
+ * @since 1.0.0
  */
-
 abstract class BackEndController extends AbstractController
 {
 	/**
@@ -27,5 +30,3 @@ abstract class BackEndController extends AbstractController
 		return 'Administration - '.parent::getPageName();
 	}
 }
-
-?>

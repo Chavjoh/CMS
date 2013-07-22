@@ -1,12 +1,15 @@
 <?php
+
 /**
  * Class TimeWrapper
  *
  * Used to retrieve current UTC time
  *
- * @version 1.0
+ * @package CMS
+ * @subpackage Wrapper
+ * @author Chavjoh
+ * @since 1.0.0
  */
-
 class TimeWrapper extends AbstractWrapper
 {
 	protected static function load()

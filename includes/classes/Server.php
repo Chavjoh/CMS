@@ -1,12 +1,13 @@
 <?php
+
 /**
  * Server information and URL handling
  *
- * @author		Chavjoh
- * @link		www.chavjoh.ch
- * @version 	1.0
+ * @package CMS
+ * @subpackage Server
+ * @author Chavjoh
+ * @since 1.0.0
  */
-
 class Server
 {
 	/**
@@ -97,5 +98,3 @@ class Server
 		return self::getProtocol().'://'.self::getHost().self::getDirectoryScript().'/';
 	}
 }
-
-?>

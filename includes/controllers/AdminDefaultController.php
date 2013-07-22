@@ -1,12 +1,15 @@
 <?php
+
 /**
  * BackEnd Default Controller
  *
  * Manage index page of admin backend
  *
- * @version 1.0
+ * @package CMS
+ * @subpackage Controller
+ * @author Chavjoh
+ * @since 1.0.0
  */
-
 class AdminDefaultController extends BackEndController
 {
     /**
@@ -25,5 +28,3 @@ class AdminDefaultController extends BackEndController
 		return 'Home - '.parent::getPageName();
 	}
 }
-
-?>

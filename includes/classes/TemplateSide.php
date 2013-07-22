@@ -1,8 +1,12 @@
 <?php
+
 /**
  * Template side enumeration
  *
- * @version 1.0
+ * @package CMS
+ * @subpackage Template
+ * @author Chavjoh
+ * @since 1.0.0
  */
 class TemplateSide extends Enumeration
 {
@@ -11,5 +15,3 @@ class TemplateSide extends Enumeration
 	const BACKEND = 'BACKEND';
 	const FRONTEND = 'FRONTEND';
 }
-
-?>

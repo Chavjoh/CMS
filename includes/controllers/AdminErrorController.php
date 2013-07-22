@@ -1,12 +1,15 @@
 <?php
+
 /**
  * Admin Error Controller
  *
  * Manage errors occurred during the page load
  *
- * @version 1.0
+ * @package CMS
+ * @subpackage Controller
+ * @author Chavjoh
+ * @since 1.0.0
  */
-
 class AdminErrorController extends BackEndController
 {
 	/**
@@ -107,5 +110,3 @@ class AdminErrorController extends BackEndController
 		return array_merge($newHeaders, parent::getHeaders());
 	}
 }
-
-?>

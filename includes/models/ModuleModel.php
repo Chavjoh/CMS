@@ -1,10 +1,13 @@
 <?php
+
 /**
  * Module Model
- * 
- * @version 1.0
+ *
+ * @package CMS
+ * @subpackage Model
+ * @author Chavjoh
+ * @since 1.0.0
  */
-
 class ModuleModel extends AbstractModel
 {
 	/**
@@ -188,5 +191,3 @@ class ModuleModel extends AbstractModel
 		return new ModuleModel($id_module);
 	}
 }
-
-?>

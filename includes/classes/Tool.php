@@ -1,10 +1,12 @@
 <?php
 /**
  * Tools methods
- * 
- * @version 1.0
+ *
+ * @package CMS
+ * @subpackage System
+ * @author Chavjoh
+ * @since 1.0.0
  */
-
 class Tool
 {
 	/**
@@ -23,4 +25,3 @@ class Tool
 			return $singular;
 	}
 }
-?>

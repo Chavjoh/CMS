@@ -1,11 +1,15 @@
 <?php
+
 /**
  * BackEnd Menus Controller
+ *
  * Manage menus showed in the CMS
  *
- * @version 1.0
+ * @package CMS
+ * @subpackage Controller
+ * @author Chavjoh
+ * @since 1.0.0
  */
-
 class AdminMenusController extends BackEndController
 {
 	/**
@@ -162,5 +166,3 @@ class AdminMenusController extends BackEndController
 		return array_merge(parent::getMethodAvailable(), array('edit', 'create', 'delete'));
 	}
 }
-
-?>

@@ -1,10 +1,13 @@
 <?php
+
 /**
  * Cache with line by line file (KEY=VALUE for each line)
  *
- * @version 1.0
+ * @package CMS
+ * @subpackage Cache
+ * @author Chavjoh
+ * @since 1.0.0
  */
-
 abstract class KeyValueCache extends AbstractCache
 {
 	/**
@@ -50,5 +53,3 @@ abstract class KeyValueCache extends AbstractCache
 		file_put_contents(static::$cacheFile, $fileContent);
 	}
 }
-
-?>

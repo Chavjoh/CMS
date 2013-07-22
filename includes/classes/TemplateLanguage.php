@@ -1,10 +1,13 @@
 <?php
+
 /**
  * Language class for CMS translation in template files
  *
- * @version 1.0
+ * @package CMS
+ * @subpackage Language
+ * @author Chavjoh
+ * @since 1.0.0
  */
-
 class TemplateLanguage extends LanguageCache
 {
 	/**
@@ -24,5 +27,3 @@ class TemplateLanguage extends LanguageCache
 			self::$cacheFile = PATH_SKIN.TemplateModel::getActivePath(TemplateSide::FRONTEND).DS.TEMPLATE_LANGUAGE."en.txt";
 	}
 }
-
-?>

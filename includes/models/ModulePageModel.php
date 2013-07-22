@@ -1,10 +1,13 @@
 <?php
+
 /**
  * Module Page Model
  *
- * @version 1.0
+ * @package CMS
+ * @subpackage Model
+ * @author Chavjoh
+ * @since 1.0.0
  */
-
 class ModulePageModel extends AbstractModel
 {
 	/**
@@ -237,5 +240,3 @@ class ModulePageModel extends AbstractModel
 			return 0;
 	}
 }
-
-?>

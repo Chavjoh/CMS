@@ -1,10 +1,13 @@
 <?php
+
 /**
  * Language class for CMS translation
  *
- * @version 1.0
+ * @package CMS
+ * @subpackage Language
+ * @author Chavjoh
+ * @since 1.0.0
  */
-
 class Language extends LanguageCache
 {
 	/**
@@ -17,5 +20,3 @@ class Language extends LanguageCache
 		self::$cacheFile = PATH_LANGUAGE."en.txt";
 	}
 }
-
-?>

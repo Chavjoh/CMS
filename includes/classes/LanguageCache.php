@@ -1,10 +1,13 @@
 <?php
+
 /**
  * Language class for CMS translation
  *
- * @version 1.0
+ * @package CMS
+ * @subpackage Language
+ * @author Chavjoh
+ * @since 1.0.0
  */
-
 abstract class LanguageCache extends KeyValueCache
 {
 	/**
@@ -39,5 +42,3 @@ abstract class LanguageCache extends KeyValueCache
 		return $translation;
 	}
 }
-
-?>

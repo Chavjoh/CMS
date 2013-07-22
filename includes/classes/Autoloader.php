@@ -1,10 +1,13 @@
 <?php
+
 /**
  * Autoloader for classes and interfaces
- * 
- * @version 1.0
+ *
+ * @package CMS
+ * @subpackage System
+ * @author Chavjoh
+ * @since 1.0.0
  */
-
 class Autoloader
 {
 	/**
@@ -48,5 +51,3 @@ class Autoloader
 // Set the autoloader
 spl_autoload_extensions('.php');
 spl_autoload_register(array('Autoloader', 'load'));
-
-?>

@@ -1,10 +1,13 @@
 <?php
+
 /**
  * Default Text Module
  *
- * @version 1.0
+ * @package CMS
+ * @subpackage Module
+ * @author Chavjoh
+ * @since 1.0.0
  */
-
 class TextModule extends AbstractModule
 {
 	/**
@@ -42,5 +45,3 @@ class TextModule extends AbstractModule
 		$this->settings->update();
 	}
 }
-
-?>

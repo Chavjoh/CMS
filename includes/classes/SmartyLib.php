@@ -1,12 +1,13 @@
 <?php
-/**
- * Singleton class for Smarty
- *
- * @author		Chavjoh
- * @link		www.chavjoh.ch
- * @version 	1.0
- */
 
+/**
+ * Factory class for Smarty
+ *
+ * @package CMS
+ * @subpackage Template
+ * @author Chavjoh
+ * @since 1.0.0
+ */
 class SmartyLib
 {
 	/**
@@ -86,5 +87,3 @@ class SmartyLib
 		return Tool::plural($parameters['value'], $parameters['singular'], $parameters['plural']);
 	}
 }
-
-?>

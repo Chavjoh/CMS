@@ -1,10 +1,13 @@
 <?php
+
 /**
  * Abstract version of a Wrapper.
  *
- * @version 1.0
+ * @package CMS
+ * @subpackage Wrapper
+ * @author Chavjoh
+ * @since 1.0.0
  */
-
 abstract class AbstractWrapper
 {
 	/**
@@ -36,5 +39,3 @@ abstract class AbstractWrapper
 	 */
 	abstract protected static function load();
 }
-
-?>

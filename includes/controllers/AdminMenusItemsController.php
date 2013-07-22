@@ -1,11 +1,15 @@
 <?php
+
 /**
  * BackEnd Menu Items Controller
+ *
  * Manage menu items showed in the CMS
  *
- * @version 1.0
+ * @package CMS
+ * @subpackage Controller
+ * @author Chavjoh
+ * @since 1.0.0
  */
-
 class AdminMenusItemsController extends BackEndController
 {
 	/**
@@ -240,5 +244,3 @@ class AdminMenusItemsController extends BackEndController
 		return parent::getMethodPosition($urlExplode) + 1;
 	}
 }
-
-?>

@@ -1,11 +1,15 @@
 <?php
+
 /**
  * BackEnd templates Controller
+ *
  * Display templates of this CMS Engine.
  *
- * @version 1.0
+ * @package CMS
+ * @subpackage Controller
+ * @author Chavjoh
+ * @since 1.0.0
  */
-
 class AdminTemplatesController extends BackEndController
 {
 	/**
@@ -166,5 +170,3 @@ class AdminTemplatesController extends BackEndController
 		return array_merge(parent::getMethodAvailable(), array('edit', 'create', 'delete'));
 	}
 }
-
-?>

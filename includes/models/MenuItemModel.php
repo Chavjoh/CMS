@@ -1,10 +1,13 @@
 <?php
+
 /**
  * Menu Item Model for Menu Management
  *
- * @version 1.0
+ * @package CMS
+ * @subpackage Model
+ * @author Chavjoh
+ * @since 1.0.0
  */
-
 class MenuItemModel extends AbstractModel
 {
 	/**
@@ -300,5 +303,3 @@ class MenuItemModel extends AbstractModel
 		return new MenuItemModel($id_menu_item);
 	}
 }
-
-?>

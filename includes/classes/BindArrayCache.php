@@ -1,10 +1,13 @@
 <?php
-/**
- * Cache for Bind Array
- *
- * @version 1.0
- */
 
+/**
+ * Cache for Database Bind Array
+ *
+ * @package CMS
+ * @subpackage Cache
+ * @author Chavjoh
+ * @since 1.0.0
+ */
 class BindArrayCache extends SerializedArrayCache
 {
 	/**
@@ -16,5 +19,3 @@ class BindArrayCache extends SerializedArrayCache
 		self::$cacheFile = PATH_CACHE."bindArray.cache";
 	}
 }
-
-?>

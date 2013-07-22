@@ -1,10 +1,13 @@
 <?php
+
 /**
  * Login
- * 
- * @version 1.0
+ *
+ * @package CMS
+ * @subpackage Login
+ * @author Chavjoh
+ * @since 1.0.0
  */
-
 class Login 
 {
 	/**
@@ -87,5 +90,3 @@ class Login
 		session_unset();
 	}
 }
-
-?>

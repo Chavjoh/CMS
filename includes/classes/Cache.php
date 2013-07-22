@@ -1,8 +1,13 @@
 <?php
-/**
- * Interface for cache class
- */
 
+/**
+ * Interface for cache classes
+ *
+ * @package CMS
+ * @subpackage Cache
+ * @author Chavjoh
+ * @since 1.0.0
+ */
 interface Cache
 {
 	static function get($key);
@@ -15,5 +20,3 @@ interface Cache
 	static function setCacheFile();
 	static function updateCacheFile();
 }
-
-?>

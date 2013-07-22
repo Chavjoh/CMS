@@ -1,9 +1,14 @@
 <?php
+
 /**
  * Enumeration representation.
+ *
  * Inspired by SplEnum class (not available in all web hosting).
  *
- * @version 1.0
+ * @package CMS
+ * @subpackage System
+ * @author Chavjoh
+ * @since 1.0.0
  */
 class Enumeration
 {
@@ -44,5 +49,3 @@ class Enumeration
 		return self::__default;
 	}
 }
-
-?>

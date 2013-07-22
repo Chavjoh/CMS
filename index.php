@@ -8,7 +8,7 @@
  * @copyright Copyright (c) 2013
  * @author Chavjoh
  * @link http://www.chavjoh.ch
- * @license -
+ * @license Creative Commons Attribution-ShareAlike 3.0 Unported
  */
 
 // Include configuration and autoloader
@@ -43,5 +43,3 @@ catch (FatalErrorException $e)
 catch (Exception $e){
 	echo $e->getMessage();
 }*/
-
-?>

@@ -1,10 +1,13 @@
 <?php
+
 /**
  * Abstract FrontEnd Default Controller
  *
- * @version 1.0
+ * @package CMS
+ * @subpackage Controller
+ * @author Chavjoh
+ * @since 1.0.0
  */
-
 abstract class FrontEndController extends AbstractController
 {
 	/**
@@ -16,5 +19,3 @@ abstract class FrontEndController extends AbstractController
 		$this->skinPath = PATH_SKIN.TemplateModel::getActivePath(TemplateSide::FRONTEND).DS;
 	}
 }
-
-?>

@@ -1,11 +1,15 @@
 <?php
+
 /**
  * BackEnd Settings Controller
- * Manage  settings of this CMS Engine.
  *
- * @version 1.0
+ * Manage settings of this CMS Engine.
+ *
+ * @package CMS
+ * @subpackage Controller
+ * @author Chavjoh
+ * @since 1.0.0
  */
-
 class AdminSettingsController extends BackEndController
 {
 	/**
@@ -45,5 +49,3 @@ class AdminSettingsController extends BackEndController
 		return 'Settings - '.parent::getPageName();
 	}
 }
-
-?>

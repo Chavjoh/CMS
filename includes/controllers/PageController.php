@@ -1,11 +1,15 @@
 <?php
+
 /**
  * FrontEnd Default Controller
+ *
  * Manage virtual page of the website
  *
- * @version 1.0
+ * @package CMS
+ * @subpackage Controller
+ * @author Chavjoh
+ * @since 1.0.0
  */
-
 class PageController extends FrontEndController
 {
 	private $moduleList = array();
@@ -138,5 +142,3 @@ class PageController extends FrontEndController
 		return $styleList;
 	}
 }
-
-?>

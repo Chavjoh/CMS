@@ -3,7 +3,10 @@
 /**
  * Security level for parsing with manager
  *
- * @version 1.0
+ * @package CMS
+ * @subpackage Security
+ * @author Chavjoh
+ * @since 1.0.0
  */
 class SecurityLevel extends Enumeration
 {
@@ -28,7 +31,10 @@ class SecurityLevel extends Enumeration
 /**
  * Security central manager
  *
- * @version 1.0
+ * @package CMS
+ * @subpackage Security
+ * @author Chavjoh
+ * @since 1.0.0
  */
 class Security
 {
@@ -94,4 +100,3 @@ class Security
         return sha1(PASSWORD_SALT.$password);
     }
 }
-?>

@@ -1,10 +1,13 @@
 <?php
+
 /**
  * Menu Model for Menu Management
- * 
- * @version 1.0
+ *
+ * @package CMS
+ * @subpackage Model
+ * @author Chavjoh
+ * @since 1.0.0
  */
-
 class MenuModel extends AbstractModel
 {
 	/**
@@ -176,5 +179,3 @@ class MenuModel extends AbstractModel
 		}
 	}
 }
-
-?>

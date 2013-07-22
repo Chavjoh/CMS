@@ -1,11 +1,15 @@
 <?php
+
 /**
  * BackEnd Users Controller
+ *
  * Manage users allowed to access to the administration interface
  *
- * @version 1.0
+ * @package CMS
+ * @subpackage Controller
+ * @author Chavjoh
+ * @since 1.0.0
  */
-
 class AdminUsersController extends BackEndController
 {
 	/**
@@ -170,5 +174,3 @@ class AdminUsersController extends BackEndController
 		return array_merge(parent::getMethodAvailable(), array('edit', 'create', 'delete'));
 	}
 }
-
-?>

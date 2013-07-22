@@ -1,11 +1,12 @@
 <?php
+
 /**
  * Admin Login Controller
+ *
  * Manage user access to the BackEnd
  *
  * @version 1.0
  */
-
 class AdminLoginController extends BackEndController
 {
     /**
@@ -54,5 +55,3 @@ class AdminLoginController extends BackEndController
 		return array_merge(parent::getMethodAvailable(), array('disconnect'));
 	}
 }
-
-?>

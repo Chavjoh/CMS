@@ -1,12 +1,15 @@
 <?php
+
 /**
  * Highlight Module
  *
  * Allows you to highlight elements composed of a title, an image and a text description.
  *
- * @version 1.0
+ * @package CMS
+ * @subpackage Module
+ * @author Chavjoh
+ * @since 1.0.0
  */
-
 class HighlightModule extends AbstractModule
 {
 	/**
@@ -43,5 +46,3 @@ class HighlightModule extends AbstractModule
 		$this->settings->update();
 	}
 }
-
-?>

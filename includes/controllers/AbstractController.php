@@ -1,11 +1,15 @@
 <?php
-/**
- * Abstract version of the Controller. 
- * Implements default values from META data.
- * 
- * @version 1.0
- */
 
+/**
+ * Abstract version of the Controller.
+ *
+ * Implements default values from META data.
+ *
+ * @package CMS
+ * @subpackage Controller
+ * @author Chavjoh
+ * @since 1.0.0
+ */
 abstract class AbstractController implements Controller
 {
 	/**
@@ -173,5 +177,3 @@ abstract class AbstractController implements Controller
 		return $this->skinPath;
 	}
 }
-
-?>

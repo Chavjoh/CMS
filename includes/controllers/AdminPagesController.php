@@ -1,11 +1,15 @@
 <?php
+
 /**
  * BackEnd Pages Controller
- * Manage  Pages of this CMS Engine.
  *
- * @version 1.0
+ * Manage pages of this CMS Engine.
+ *
+ * @package CMS
+ * @subpackage Controller
+ * @author Chavjoh
+ * @since 1.0.0
  */
-
 class AdminPagesController extends BackEndController
 {
 	/**
@@ -375,5 +379,3 @@ class AdminPagesController extends BackEndController
 		return 0;
 	}
 }
-
-?>

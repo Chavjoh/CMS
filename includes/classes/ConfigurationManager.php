@@ -1,10 +1,13 @@
 <?php
-/**
- * Website parameters management
- * 
- * @version 1.0
- */
 
+/**
+ * Website configuration management
+ *
+ * @package CMS
+ * @subpackage System
+ * @author Chavjoh
+ * @since 1.0.0
+ */
 class ConfigurationManager
 {
 	/**
@@ -223,5 +226,3 @@ class ConfigurationManager
 		return $modification;
 	}
 }
-
-?>

@@ -1,10 +1,13 @@
 <?php
+
 /**
  * Layout Model
- * 
- * @version 1.0
+ *
+ * @package CMS
+ * @subpackage Model
+ * @author Chavjoh
+ * @since 1.0.0
  */
-
 class LayoutModel extends AbstractModel
 {
 	/**
@@ -23,5 +26,3 @@ class LayoutModel extends AbstractModel
 		parent::__construct($id, $data);
 	}
 }
-
-?>

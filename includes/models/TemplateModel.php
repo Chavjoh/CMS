@@ -1,8 +1,12 @@
 <?php
+
 /**
  * Template Model
  *
- * @version 1.0
+ * @package CMS
+ * @subpackage Model
+ * @author Chavjoh
+ * @since 1.0.0
  */
 class TemplateModel extends AbstractModel
 {
@@ -359,5 +363,3 @@ class TemplateModel extends AbstractModel
 		return new TemplateModel($id_template);
 	}
 }
-
-?>

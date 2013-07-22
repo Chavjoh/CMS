@@ -1,10 +1,13 @@
 <?php
+
 /**
  * Page Model
- * 
- * @version 1.0
+ *
+ * @package CMS
+ * @subpackage Model
+ * @author Chavjoh
+ * @since 1.0.0
  */
-
 class PageModel extends AbstractModel
 {
 	/**
@@ -229,5 +232,3 @@ class PageModel extends AbstractModel
 		return new PageModel($id_page);
 	}
 }
-
-?>

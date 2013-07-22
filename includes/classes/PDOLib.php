@@ -1,10 +1,13 @@
 <?php
+
 /**
  * Singleton class for PDO
- * 
- * @version 1.0
+ *
+ * @package CMS
+ * @subpackage Database
+ * @author Chavjoh
+ * @since 1.0.0
  */
-
 class PDOLib
 {
 	/**
@@ -54,4 +57,3 @@ class PDOLib
 		}
 	}
 }
-?>

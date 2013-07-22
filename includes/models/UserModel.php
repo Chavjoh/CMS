@@ -1,10 +1,13 @@
 <?php
+
 /**
  * User Model
- * 
- * @version 1.0
+ *
+ * @package CMS
+ * @subpackage Model
+ * @author Chavjoh
+ * @since 1.0.0
  */
-
 class UserModel extends AbstractModel
 {
 	/**
@@ -172,5 +175,3 @@ class UserModel extends AbstractModel
 		return new UserModel($id_user);
 	}
 }
-
-?>

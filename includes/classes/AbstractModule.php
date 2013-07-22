@@ -1,10 +1,13 @@
 <?php
+
 /**
  * Abstract version of a Module.
  *
- * @version 1.0
+ * @package CMS
+ * @subpackage Module
+ * @author Chavjoh
+ * @since 1.0.0
  */
-
 abstract class AbstractModule
 {
 	/**
@@ -137,5 +140,3 @@ abstract class AbstractModule
 		return $this->module;
 	}
 }
-
-?>

@@ -1,11 +1,15 @@
 <?php
-/**
- * Dispatcher (Router) class. 
- * Handle request and dispatch it to the appropriate controller
- * 
- * @version 1.0
- */
 
+/**
+ * Dispatcher (Router) class.
+ *
+ * Handle request and dispatch it to the appropriate controller
+ *
+ * @package CMS
+ * @subpackage System
+ * @author Chavjoh
+ * @since 1.0.0
+ */
 class Dispatcher
 {
 	/**
@@ -181,5 +185,3 @@ class Dispatcher
 		return $this->controller;
 	}
 }
-
-?>

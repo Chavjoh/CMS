@@ -1,10 +1,13 @@
 <?php
+
 /**
  * Abstract cache class with basic cache manipulation functions
  *
- * @version 1.0
+ * @package CMS
+ * @subpackage Cache
+ * @author Chavjoh
+ * @since 1.0.0
  */
-
 abstract class AbstractCache implements Cache
 {
 	/**
@@ -130,5 +133,3 @@ abstract class AbstractCache implements Cache
 			static::load();
 	}
 }
-
-?>

@@ -1,10 +1,13 @@
 <?php
+
 /**
  * Wrapper Model
- * 
- * @version 1.0
+ *
+ * @package CMS
+ * @subpackage Model
+ * @author Chavjoh
+ * @since 1.0.0
  */
-
 class WrapperModel extends AbstractModel
 {
 	/**

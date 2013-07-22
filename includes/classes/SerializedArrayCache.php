@@ -1,10 +1,13 @@
 <?php
+
 /**
  * Cache with array serialization
  *
- * @version 1.0
+ * @package CMS
+ * @subpackage Cache
+ * @author Chavjoh
+ * @since 1.0.0
  */
-
 abstract class SerializedArrayCache extends AbstractCache
 {
 	/**
@@ -31,5 +34,3 @@ abstract class SerializedArrayCache extends AbstractCache
 		file_put_contents(static::$cacheFile, serialize(static::getArray()));
 	}
 }
-
-?>

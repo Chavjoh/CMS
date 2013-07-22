@@ -1,10 +1,13 @@
 <?php
+
 /**
  * Interface for Controller
- * 
- * @version 1.0
+ *
+ * @package CMS
+ * @subpackage Controller
+ * @author Chavjoh
+ * @since 1.0.0
  */
-
 interface Controller
 {
 	/**
@@ -98,5 +101,3 @@ interface Controller
 	 */
 	public function getStylesheetList();
 }
-
-?>

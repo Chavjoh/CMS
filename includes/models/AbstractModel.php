@@ -1,11 +1,15 @@
 <?php
+
 /**
  * Abstract version of the Model.
+ *
  * Implements default functions for SQL (Add, Edit, Remove)
  *
- * @version 1.0
+ * @package CMS
+ * @subpackage Model
+ * @author Chavjoh
+ * @since 1.0.0
  */
-
 abstract class AbstractModel
 {
 	/**
@@ -102,16 +106,16 @@ abstract class AbstractModel
 	 *
 	 * @param string|array $field Name of the field
 	 * @param string|array $value New value of the field
-	 * @throws Exception Array size aren't the same
+	 * @throws FatalErrorException Array size aren't the same
 	 */
 	public function set($field, $value)
 	{
 		if (is_array($field))
 		{
 			if (!is_array($value))
-				throw new Exception("[".__METHOD__."] If field is an array, value must be an array too.");
+				throw new FatalErrorException(__METHOD__, "If field is an array, value must be an array too.");
 			else if (count($field) != count($value))
-				throw new Exception("[".__METHOD__."] Can't set with array (size aren't the same).");
+				throw new FatalErrorException(__METHOD__, "Can't set with array (size aren't the same).");
 
 			for ($i = 0; $i < count($field); $i++)
 				$this->set($field[$i], $value[$i]);
@@ -319,13 +323,13 @@ abstract class AbstractModel
 	 * @param array $updateFields Array of fields to be updated (not value)
 	 * @param array $where Array of where parameter (where parameter: Array(field, value, operator, conjunction)
 	 * @return int Number of rows affected by the query
-	 * @throws Exception If too many fields are indicated in parameter
+	 * @throws FatalErrorException If too many fields are indicated in parameter
 	 * @throws PDOException Database error when updating element
 	 */
 	public function update($updateFields = array(), $where = array())
 	{
 		if (count($updateFields) > count($this->bindArray))
-			throw new Exception("[".__METHOD__."] Too many fields indicated.");
+			throw new FatalErrorException(__METHOD__, "Too many fields indicated.");
 
 		// Add condition for primary key
 		if (count($where) == 0)
@@ -422,7 +426,7 @@ abstract class AbstractModel
 	 * @param array $where Array of where parameter (where parameter: Array(field, value, operator, conjunction)
 	 * @param string $bindParams Return the parameter field and value placed in the where clause
 	 * @return string Where clause
-	 * @throws Exception If the field or conjunction aren't specified
+	 * @throws FatalErrorException If the field or conjunction aren't specified
 	 */
 	protected function buildWhereClause($where, &$bindParams)
 	{
@@ -438,14 +442,14 @@ abstract class AbstractModel
 			{
 				// Check availability of field name, value and the operator of the present condition
 				if (!isset($arrayParam['field']) OR !isset($arrayParam['value']) OR !isset($arrayParam['operator']))
-					throw new Exception("[".__METHOD__."] Field, value or operator is missing in [where] parameter.");
+					throw new FatalErrorException(__METHOD__, "Field, value or operator is missing in [where] parameter.");
 
 				// Add conjunction if necessary
 				if ($index > 0)
 				{
 					// Check availability of condition conjunction
 					if (!isset($arrayParam['conjunction']))
-						throw new Exception("[".__METHOD__."] Conjunction is missing in [where] parameter.");
+						throw new FatalErrorException(__METHOD__, "Conjunction is missing in [where] parameter.");
 
 					// Add the conjunction
 					$whereClause .= ' '.$arrayParam['conjunction'].' ';
@@ -481,12 +485,12 @@ abstract class AbstractModel
 	 *
 	 * @param array $fields Array of fields to insert
 	 * @return string Insert query
-	 * @throws Exception Exception if the number of fields isn't upper than 0
+	 * @throws FatalErrorException Exception if the number of fields isn't upper than 0
 	 */
 	protected function buildInsertQuery($fields)
 	{
 		if (count($fields) <= 0)
-			throw new Exception("[".__METHOD__."] There must be at least one field passed in the array.");
+			throw new FatalErrorException(__METHOD__, "There must be at least one field passed in the array.");
 
 		// Clone array
 		$parameters = $fields;
@@ -504,7 +508,7 @@ abstract class AbstractModel
 	 * @param array $fields Array of fields to update
 	 * @param string $whereClause Where clause in a string
 	 * @return string Update query
-	 * @throws Exception Exception if a field doesn't exists
+	 * @throws FatalErrorException Exception if a field doesn't exists
 	 */
 	protected function buildUpdateQuery($fields, $whereClause = '')
 	{
@@ -518,7 +522,7 @@ abstract class AbstractModel
 		{
 			// Check the property existence
 			if (!property_exists($this, $key))
-				throw new Exception("[".__METHOD__."] Unknown field");
+				throw new FatalErrorException(__METHOD__, "Unknown field");
 
 			// Add a separator if necessary
 			if (strlen($query) > $basicSize)
@@ -544,5 +548,3 @@ abstract class AbstractModel
 	}
 
 }
-
-?>

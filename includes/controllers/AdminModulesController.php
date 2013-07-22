@@ -1,11 +1,15 @@
 <?php
+
 /**
  * BackEnd Modules Controller
+ *
  * Manage modules integrated to the CMS
  *
- * @version 1.0
+ * @package CMS
+ * @subpackage Controller
+ * @author Chavjoh
+ * @since 1.0.0
  */
-
 class AdminModulesController extends BackEndController
 {
 	/**
@@ -55,5 +59,3 @@ class AdminModulesController extends BackEndController
 		return 'Modules - '.parent::getPageName();
 	}
 }
-
-?>
