@@ -8,7 +8,7 @@
  * @author Chavjoh
  * @since 1.0.0
  */
-abstract class AbstractWrapper
+abstract class AbstractWrapper implements Wrapper
 {
 	/**
 	 * All data retrieved with the wrapper
@@ -18,10 +18,7 @@ abstract class AbstractWrapper
 	protected static $data = null;
 
 	/**
-	 * Get a value from the wrapper.
-	 *
-	 * @param string $key Key associated with the value
-	 * @return string Value associated to the key
+	 * @see Wrapper::get()
 	 */
 	public static function get($key)
 	{
@@ -33,9 +30,4 @@ abstract class AbstractWrapper
 		else
 			return '';
 	}
-
-	/**
-	 * Load the data associated with the wrapper
-	 */
-	abstract protected static function load();
 }
