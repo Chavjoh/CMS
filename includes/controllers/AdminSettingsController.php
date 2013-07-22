@@ -28,17 +28,17 @@ class AdminSettingsController extends BackEndController
 	 */
 	private function saveMetaSettings()
 	{
-		ConfigurationManager::setAutoCommit(false);
+		Configuration::setAutoCommit(false);
 
-		ConfigurationManager::set('meta_name', (isset($_POST['md_title'])) ? $_POST['md_title'] : '');
-		ConfigurationManager::set('meta_description', (isset($_POST['md_description'])) ? $_POST['md_description'] : '');
-		ConfigurationManager::set('meta_keywords', (isset($_POST['md_keywords'])) ? $_POST['md_keywords'] : '');
-		ConfigurationManager::set('meta_favicon', (isset($_POST['md_favicon'])) ? $_POST['md_favicon'] : '');
-		ConfigurationManager::set('meta_robots', (isset($_POST['md_robots'])) ? $_POST['md_robots'] : '');
-		ConfigurationManager::set('meta_author', (isset($_POST['md_author'])) ? $_POST['md_author'] : '');
+		Configuration::set('meta_name', (isset($_POST['md_title'])) ? $_POST['md_title'] : '');
+		Configuration::set('meta_description', (isset($_POST['md_description'])) ? $_POST['md_description'] : '');
+		Configuration::set('meta_keywords', (isset($_POST['md_keywords'])) ? $_POST['md_keywords'] : '');
+		Configuration::set('meta_favicon', (isset($_POST['md_favicon'])) ? $_POST['md_favicon'] : '');
+		Configuration::set('meta_robots', (isset($_POST['md_robots'])) ? $_POST['md_robots'] : '');
+		Configuration::set('meta_author', (isset($_POST['md_author'])) ? $_POST['md_author'] : '');
 
-		ConfigurationManager::commit();
-		ConfigurationManager::setAutoCommit(true);
+		Configuration::commit();
+		Configuration::setAutoCommit(true);
 	}
 
 	/**

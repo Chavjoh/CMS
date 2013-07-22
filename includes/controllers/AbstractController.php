@@ -76,7 +76,7 @@ abstract class AbstractController implements Controller
 	 */
 	public function getPageName()
 	{
-		return ConfigurationManager::get('meta_name');
+		return Configuration::get('meta_name');
 	}
 	
 	/**
@@ -84,7 +84,7 @@ abstract class AbstractController implements Controller
 	 */
 	public function getPageDescription()
 	{
-		return ConfigurationManager::get('meta_description');
+		return Configuration::get('meta_description');
 	}
 	
 	/**
@@ -92,7 +92,7 @@ abstract class AbstractController implements Controller
 	 */
 	public function getPageKeywords()
 	{
-		return ConfigurationManager::get('meta_keywords');
+		return Configuration::get('meta_keywords');
 	}
 
 	/**
@@ -100,7 +100,7 @@ abstract class AbstractController implements Controller
 	 */
 	public function getPageRobots()
 	{
-		return ConfigurationManager::get('meta_robots');
+		return Configuration::get('meta_robots');
 	}
 
 	/**
@@ -108,7 +108,7 @@ abstract class AbstractController implements Controller
 	 */
 	public function getPageAuthor()
 	{
-		return ConfigurationManager::get('meta_author');
+		return Configuration::get('meta_author');
 	}
 	
 	/**

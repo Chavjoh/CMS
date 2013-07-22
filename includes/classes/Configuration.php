@@ -8,7 +8,7 @@
  * @author Chavjoh
  * @since 1.0.0
  */
-class ConfigurationManager
+class Configuration
 {
 	/**
 	 * Store all information about settings
