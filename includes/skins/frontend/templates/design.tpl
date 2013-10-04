@@ -1,5 +1,5 @@
-{assign var=websiteName value=Security::out(ConfigurationManager::get('meta_name'))}
-{assign var=websiteFavicon value=Security::out(ConfigurationManager::get('meta_favicon'))}
+{assign var=websiteName value=Security::out(Configuration::get('meta_name'))}
+{assign var=websiteFavicon value=Security::out(Configuration::get('meta_favicon'))}
 {assign var=websitePage value=Security::out($controller->getPageName())}
 {assign var=websiteKeywords value=Security::out($controller->getPageKeywords())}
 {assign var=websiteDescription value=Security::out($controller->getPageDescription())}
@@ -73,7 +73,7 @@
 				A major advantage of using a CMS is that it requires almost no technical skill or knowledge to manage.
 			</div>
 			<div id="footer-dark">
-				<div class="right">Created by Johan Chavaillaz and Jason Racine</div>
+				<div class="right">Created by <a href="http://www.chavjoh.ch">Chavjoh</a></div>
 				<div class="left">Copyright {$websiteName} 2013</div>
 			</div>
 		</footer>

@@ -1,11 +1,11 @@
-{assign var=websiteName value=Security::out(ConfigurationManager::get('meta_name'))}
-{assign var=websiteFavicon value=Security::out(ConfigurationManager::get('meta_favicon'))}
+{assign var=websiteName value=Security::out(Configuration::get('meta_name'))}
+{assign var=websiteFavicon value=Security::out(Configuration::get('meta_favicon'))}
 {assign var=websitePage value=Security::out($controller->getPageName())}
 {assign var=websiteKeywords value=Security::out($controller->getPageKeywords())}
 {assign var=websiteRobots value=Security::out($controller->getPageRobots())}
 {assign var=websiteAuthor value=Security::out($controller->getPageAuthor())}
 {assign var=websiteDescription value=Security::out($controller->getPageDescription())}
-{assign var=baseUrl value=Server::getDirectoryScript()|cat:$smarty.const.DS|cat:$smarty.const.URL_ADMIN|cat:$smarty.const.DS}
+{assign var=baseUrl value=Server::getDirectoryScript()|cat:'/':$smarty.const.URL_ADMIN:'/'}
 <!DOCTYPE html>
 <html lang="fr">
     <head>

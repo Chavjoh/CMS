@@ -9,11 +9,11 @@
 		<tr>
 			<td>
 				<div>Website title</div>
-				<input type="text" name="md_title" value="{Security::out(ConfigurationManager::get('meta_name'))}" tabindex="1" />
+				<input type="text" name="md_title" value="{Security::out(Configuration::get('meta_name'))}" tabindex="1" />
 			</td>
 			<td>
 				<div>Favicon</div>
-				<input type="text" name="md_favicon" value="{Security::out(ConfigurationManager::get('meta_favicon'))}" tabindex="13" />
+				<input type="text" name="md_favicon" value="{Security::out(Configuration::get('meta_favicon'))}" tabindex="13" />
 			</td>
 			<td>
 				&nbsp;
@@ -22,11 +22,11 @@
 		<tr>
 			<td>
 				<div>Website description</div>
-				<input type="text" name="md_description" value="{Security::out(ConfigurationManager::get('meta_description'))}" tabindex="5" />
+				<input type="text" name="md_description" value="{Security::out(Configuration::get('meta_description'))}" tabindex="5" />
 			</td>
 			<td>
 				<div>Robots</div>
-				<input type="text" name="md_robots" value="{Security::out(ConfigurationManager::get('meta_robots'))}" tabindex="15" />
+				<input type="text" name="md_robots" value="{Security::out(Configuration::get('meta_robots'))}" tabindex="15" />
 			</td>
 			<td>
 				&nbsp;
@@ -35,11 +35,11 @@
 		<tr>
 			<td>
 				<div>Keywords</div>
-				<input type="text" name="md_keywords" value="{Security::out(ConfigurationManager::get('meta_keywords'))}" tabindex="10" />
+				<input type="text" name="md_keywords" value="{Security::out(Configuration::get('meta_keywords'))}" tabindex="10" />
 			</td>
 			<td>
 				<div>Author</div>
-				<input type="text" name="md_author" value="{Security::out(ConfigurationManager::get('meta_author'))}" tabindex="20" />
+				<input type="text" name="md_author" value="{Security::out(Configuration::get('meta_author'))}" tabindex="20" />
 			</td>
 			<td>
 				<input type="submit" name="md_save" value="Save Meta Data Settings" tabindex="25" class="btn btn-success" />
