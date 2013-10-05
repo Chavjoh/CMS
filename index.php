@@ -11,12 +11,12 @@
  * @license Creative Commons Attribution-ShareAlike 3.0 Unported
  */
 
-// Include configuration and autoloader
-require_once './includes/configuration.php';
-require_once PATH_CLASS.'Autoloader.php';
-
 try
 {
+	// Include configuration and autoloader
+	require_once './includes/configuration.php';
+	require_once PATH_CLASS.'Autoloader.php';
+
 	// Handle request and dispatch it to the appropriate controller
 	$dispatcher = new Dispatcher($_SERVER['REQUEST_URI']);
 	$dispatcher->dispatch();
@@ -39,7 +39,7 @@ catch (FatalErrorException $e)
 {
 	echo '<h1> Fatal Error </h1>';
 	echo $e->getMessage();
-}/*
+}
 catch (Exception $e){
 	echo $e->getMessage();
-}*/
+}

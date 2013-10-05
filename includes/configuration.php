@@ -4,6 +4,22 @@
  * Be careful ;)
  */
 
+define("CONFIGURATION_FILE", "./includes/configuration.xml");
+
+if (!file_exists(CONFIGURATION_FILE)) {
+	throw new Exception("Need XML configuration file.");
+}
+
+// Get configuration content in XML
+$configurationContentXML = file_get_contents(CONFIGURATION_FILE);
+
+if ($configurationContentXML == "") {
+	header('Location: ./install/');
+}
+
+// Read XML file
+$configurationXML = new SimpleXMLElement($configurationContentXML);
+
 // Session configuration
 session_name('Chavjoh_CMS');
 session_start();
@@ -15,19 +31,19 @@ date_default_timezone_set('Europe/Paris');
 define('DS', '/');
 
 // Activation of the debug mode
-define('DEBUG', true);
+define('DEBUG', (bool) $configurationXML->debug['active']);
 
 /*
  * Admin key to get access to the backend.
  * Special characters and spaces forbidden.
  */
-define('URL_ADMIN', 'admin');
+define('URL_ADMIN', $configurationXML->administration->key);
 
 // CMS version
 define('VERSION', '1.0.0a');
 
 // Password salt
-define('PASSWORD_SALT', 'Zg=Wu[pr18bl6-X');
+define('PASSWORD_SALT', $configurationXML->salt['value']);
 
 // Paths for the different parts of the CMS
 define('PATH_CLASS', 'includes'. DS .'classes'. DS);
@@ -42,13 +58,13 @@ define('PATH_SKIN', 'includes'. DS .'skins'. DS);
 define('PATH_LOG', 'includes'. DS .'logs'. DS);
 
 // Database access information
-define('DB_DRIVER', 'mysql');
-define('DB_NAME', 'chavjoh_cms');
-define('DB_USER', 'root');
-define('DB_PASSWORD', '');
-define('DB_HOST', 'localhost');
-define('DB_PORT', 3306);
-define('DB_PREFIX', 'cms_');
+define('DB_DRIVER', $configurationXML->database->driver);
+define('DB_NAME', $configurationXML->database->name);
+define('DB_USER', $configurationXML->database->user);
+define('DB_PASSWORD', $configurationXML->database->password);
+define('DB_HOST', $configurationXML->database->host);
+define('DB_PORT', $configurationXML->database->port);
+define('DB_PREFIX', $configurationXML->database->prefix);
 
 // Template information
 define('TEMPLATE_FRONTEND', 'frontend');
