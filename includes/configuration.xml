@@ -1,0 +1,2 @@
+<?xml version="1.0"?>
+<configuration><debug active="0"/><administration><key>admin</key></administration><salt value="Zg=Wu[pr18bl6-X"/><database><driver>mysql</driver><name>chavjoh_cms</name><user>root</user><password></password><host>localhost</host><port>3306</port><prefix>cms_</prefix></database></configuration>
